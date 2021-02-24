@@ -8,4 +8,3 @@ colorama
 nltk
 gensim
 plumbum
-notepad

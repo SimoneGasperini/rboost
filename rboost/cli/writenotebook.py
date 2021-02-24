@@ -25,8 +25,8 @@ class WriteNotebook (RBoost):
     self.check_dir(dirname=dirname)
     os.makedirs(self.nb_path + dirname, exist_ok=True)
 
-    notebook = self.create_file(dirname=dirname)
-    os.system('notepad ' + notebook.path + notebook.name)
+    notebook = self.create_file(dirname)
+    self.open_editor(notebook)
 
     self.check_refs(notebook)
     self.upload_file(notebook)
@@ -59,6 +59,18 @@ class WriteNotebook (RBoost):
       notebook.create_new()
 
     return notebook
+
+
+  def open_editor (self, notebook):
+
+    if sys.platform.startswith('win'):
+      os.system('notepad ' + notebook.path + notebook.name)
+
+    elif sys.platform.startswith('linux'):
+      os.system('gedit ' + notebook.path + notebook.name)
+
+    else:
+      raise SystemError
 
 
   def check_refs (self, notebook):
