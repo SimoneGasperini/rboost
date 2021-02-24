@@ -1,0 +1,41 @@
+#TEXT
+AMANDA KNOX CASE
+
+The fact:
+
+Knox, aged 20 at the time of the murder, had called the police after returning to her and Kercher's apartment following a night spent with her boyfriend, Raffaele Sollecito, and finding Kercher's bedroom door locked and blood in the bathroom. During the police interrogations that followed, the conduct of which is a matter of dispute, Knox allegedly implicated herself and her employer, Patrick Lumumba, in the murder. Initially, Knox, Sollecito, and Lumumba were all arrested for Kercher's murder, but Lumumba was soon released. In the initial trial, Knox and Sollecito were convicted and sentenced to 26 and 25 years in prison, respectively. Known burglar Rudy Guede was arrested a short time later following the discovery of his bloodstained fingerprints on Kercher's possessions. He was later found guilty of murder in a fast-track trial and was sentenced to a 16-year prison sentence. As of December 4, 2020, an Italian court ruled that Guede could complete his term doing community service.
+
+The verdict:
+
+On March 27, 2015, the ultimate appeal by Knox and Sollecito was heard by the Supreme Court of Cassation; it ruled that the case was without foundation, thereby definitively acquitting them of the murder. Her defamation conviction was upheld but the three-year sentence was deemed served by the time she had already spent in prison.Rather than merely declaring that there were errors in the earlier court cases or that there was not enough evidence to convict, the court ruled that Knox and Sollecito were innocent of involvement in the murder. On September 7, 2015, the Court published the report on the acquittal, citing "glaring errors", "investigative amnesia", and "guilty omissions", where a five-judge panel said that the prosecutors who won the original murder conviction failed to prove a "whole truth" to back up the scenario that Knox and Sollecito killed Kercher. They also stated that there were "sensational failures" (clamorose defaillance) in the investigation, and that the lower court had been guilty of "culpable omissions" (colpevoli omissioni) in ignoring expert testimony that demonstrated contamination of evidence.
+
+Verdict and controversy: 
+
+On December 5, 2009, Knox, by then 22, was convicted on charges of faking a break-in, defamation, sexual violence, and murder, and was sentenced to 26 years imprisonment. Sollecito was sentenced to 25 years.In Italy, opinion was not generally favorable toward Knox, and an Italian jurist remarked: "This is the simplest and fairest criminal trial one could possibly think of in terms of evidence."
+
+In the United States, the verdict was widely viewed as a miscarriage of justice. American lawyers expressed concern about pre-trial publicity, and statements excluded from the murder case being allowed for a contemporaneous civil suit heard by the same jury. Knox's defense attorneys were seen as, by American standards, passive in the face of the prosecution's use of character assassination. Although acknowledging that Knox might have been a person of interest for American police in similar circumstances, journalist Nina Burleigh, who had spent months in Perugia during the trial while researching a book on the case, said the conviction had not been based on solid proof, and there had been resentment at the Knox family that amounted to "anti-Americanism".
+
+A number of US experts spoke out against DNA evidence used by the prosecution. According to consultant Gregory Hampikian, the Italian forensic police could not replicate the key result, claimed to have successfully identified DNA at levels below those an American laboratory would attempt to analyse, and never supplied validation of their methods. Knox was indicted in 2010 on charges of defamation against the police for saying she had been struck across her head during the interview in which she incriminated herself.
+
+In May 2011, Greg Hampikian, director of the Idaho Innocence Project, a non-profit investigative organization dedicated to proving the innocence of wrongly convicted people, said forensic results from the crime scene pointed to Guede as the killer and to his having acted on his own.
+
+SEE FIGURE "knox_case"
+
+MEDIEVAL LAW:
+Law and order was very harsh in Medieval England. Those in charge of law and order believed that people would only learn how to behave properly if they feared what would happen to them if they broke the law. Even the ‘smallest’ offences had serious punishments. The authorities feared the poor simply because there were many more poor than rich and any revolt could be potentially damaging – as the Peasants Revolt of 1381 proved. historylearningsite.co.uk. The History Learning Site, 5 Mar 2015. 23 Feb 2021.
+Law and order was very harsh in Medieval England. Those in charge of law and order believed that people would only learn how to behave properly if they feared what would happen to them if they broke the law. Even the ‘smallest’ offences had serious punishments. The authorities feared the poor simply because there were many more poor than rich and any revolt could be potentially damaging – as the Peasants Revolt of 1381 proved. By the time of Henry II, the system of law in England had been improved because Henry sent out his own judges from London to listen to cases throughout all England’s counties. Each accused person had to go through an ordeal. There were three ordeals: 
+
+Ordeal by fire: An accused person held a red hot iron bar and walked three paces. His hand was then bandaged and left for three days. If the wound was getting better after three days, you were innocent. If the wound had clearly not got any better, you were guilty. 
+
+Ordeal by water: An accused person was tied up and thrown into water. If you floated you were guilty of the crime you were accused of. 
+
+Ordeal by combat: This was used by noblemen who had been accused of something. They would fight in combat with their accuser. Whoever won was right. Whoever lost was usually dead at the end of the fight.
+
+SEE FIGURE "medieval_law"
+
+
+
+#IMAGES
+-knox_case.jpg
+
+-medieval_law.jpg
