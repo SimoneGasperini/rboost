@@ -23,7 +23,7 @@ bacteria and their interaction with e.g. antibiotics or bacteriophages.
 SEE FIGURE "photonic_crystals_project".
 
 
-#IMAGES
+#FIGURES
 -photonic_crystals_review.gif
 
 -photonic_crystals_project.ppm

@@ -44,4 +44,4 @@ class ListFiles (RBoost):
       if self._date is not None:
         db = db.filter_by('DATE', value=self._date)
 
-    db.show(tab=True)
+    db.show(full=True)

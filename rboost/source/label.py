@@ -7,24 +7,21 @@ class Label ():
   def __init__ (self,
                 name,
                 types         = [],
-                query_count   = 0,
-                reading_count = 0,
-                writing_count = 0,
+                queries_count = 0,
+                uploads_count = 0,
                 mentions      = pd.DataFrame(columns=['FILENAME','FILETYPE','SCORE'])):
 
     self.name = name
     self.types = types
-    self.query_count = query_count
-    self.reading_count = reading_count
-    self.writing_count = writing_count
+    self.queries_count = queries_count
+    self.uploads_count = uploads_count
     self.mentions = mentions
 
 
   def update (self, labinfo):
 
-    self.query_count += labinfo['query_count']
-    self.reading_count += labinfo['reading_count']
-    self.writing_count += labinfo['writing_count']
+    self.queries_count += labinfo['queries_count']
+    self.uploads_count += labinfo['uploads_count']
 
     self.mentions = self.mentions.append(labinfo['mentions'], ignore_index=True)
     self.mentions.sort_values(by=['SCORE'], ascending=False, ignore_index=True, inplace=True)
@@ -46,5 +43,5 @@ if __name__== '__main__':
   from rboost.source.network import Network
 
   with Network(path='./../database/pickles/', name='network.pkl') as net:
-    label = net.graph.nodes['quantum']['label']
+    label = net.graph.nodes['tip']['label']
     label.show()

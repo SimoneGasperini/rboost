@@ -30,38 +30,38 @@ class Network ():
     nx.write_gpickle(self.graph, self.path + self.name)
 
 
-  def add_new_nodes (self, labsinfo):
+  def add_new_nodes (self, labs):
 
-    new_nodes = [dic['name'] for dic in labsinfo
+    new_nodes = [dic['name'] for dic in labs
                  if dic['name'] not in self.graph.nodes]
 
     for node in new_nodes:
       self.graph.add_node(node, label=Label(name=node))
 
 
-  def update_nodes (self, labsinfo):
+  def update_nodes (self, labs):
 
-    self.add_new_nodes(labsinfo)
+    self.add_new_nodes(labs)
 
-    for dic in labsinfo:
+    for dic in labs:
       node = dic['name']
       self.graph.nodes[node]['label'].update(dic)
 
 
-  def add_new_edges (self, relations):
+  def add_new_edges (self, links):
 
-    new_edges = [rel for rel in relations
-                 if rel not in self.graph.edges]
+    new_edges = [link for link in links
+                 if link not in self.graph.edges]
 
     for (node1, node2) in new_edges:
       self.graph.add_edge(node1, node2, edge_count=0)
 
 
-  def update_edges (self, relations):
+  def update_edges (self, links):
 
-    self.add_new_edges(relations)
+    self.add_new_edges(links)
 
-    edges_counter = Counter(relations)
+    edges_counter = Counter(links)
 
     for edge in edges_counter:
       node1, node2 = edge
@@ -75,9 +75,8 @@ class Network ():
 
   def compute_node_size (self):
 
-    node_size = np.array([self.graph.nodes[n]['label'].query_count +
-                          self.graph.nodes[n]['label'].reading_count +
-                          self.graph.nodes[n]['label'].writing_count
+    node_size = np.array([self.graph.nodes[n]['label'].queries_count +
+                          self.graph.nodes[n]['label'].uploads_count
                           for n in self.graph.nodes])
     node_size = ((1. / np.sum(node_size)) * node_size) * 4e4
 

@@ -45,14 +45,14 @@ class WriteNotebook (RBoost):
 
   def create_file (self, dirname):
 
-    notebook = Notebook(path=self.nb_path, dirname=dirname)
+    notebook = Notebook(abspath=self.nb_path, dirname=dirname, name=None)
 
-    with Database(path=self.pickle_path, name='database.pkl') as db:
+    with Database(path=WriteNotebook.pickle_path, name='database.pkl') as db:
 
-      if dirname + '/' + notebook.name in list(db.df['FILENAME']):
+      if notebook.filename in list(db.df['FILENAME']):
         colorama.init()
-        message = f'--> FAIL: The file "{notebook.name}" already exists in RBoost database'
-        print('\033[91m' + message + '\033[0m')
+        message = f'FAIL: The file "{notebook.name}" already exists in RBoost database'
+        print('>>> \033[91m' + message + '\033[0m')
         sys.exit()
 
     if notebook.name not in os.listdir(self.nb_path + dirname):
@@ -77,32 +77,37 @@ class WriteNotebook (RBoost):
 
     lines = notebook.read_lines()
 
-    images = [line[1:] for line in lines[lines.index('#IMAGES')+1:] if line.startswith('-')]
+    images = [line[1:] for line in lines[lines.index('#FIGURES')+1:] if line.startswith('-')]
     not_found = [img for img in images if img not in os.listdir(notebook.path)]
 
     if not_found:
       colorama.init()
-      message = '--> FAIL: The following images files do not exist:\n\t' + '\n\t'.join(not_found)
-      print('\033[91m' + message + '\033[0m')
+      message = 'FAIL: The following images files do not exist:\n\t' + '\n\t'.join(not_found)
+      print('>>> \033[91m' + message + '\033[0m')
       sys.exit()
 
 
   def upload_file (self, notebook):
 
-    filename = os.path.basename(notebook.path[:-1]) + '/' + notebook.name
-    print(f'>>> Are you sure to upload the file "{filename}" on RBoost database?')
+    print(f'>>> Are you sure to upload the file "{notebook.filename}" on RBoost database?')
     if not input('>>> (y/n) ') == 'y': sys.exit()
 
-    print(f'Uploading "{filename}"')
+    print(f'>>> Uploading "{notebook.filename}"')
+
+    date = notebook.name[:10]
+    text = notebook.get_text()
+    figures = notebook.get_figures()
 
     with Database(path=self.pickle_path, name='database.pkl') as db:
 
-      data = [[filename, notebook.filetype, notebook.name[:10]]]
+      data = [[date, fig.filename, fig.filetype, fig.reference] for fig in figures]
+      data.append([date, notebook.filename, notebook.filetype, notebook.reference])
       new_df = pd.DataFrame(data=data, columns=db.df.columns)
       db.df = db.df.append(new_df, ignore_index=True)
 
     with Network(path=self.pickle_path, name='network.pkl') as net:
 
-      labsinfo, relations = notebook.get_data()
-      net.update_nodes(labsinfo)
-      net.update_edges(relations)
+      text_labs, text_links = notebook.get_data_from_text(text)
+      figs_labs, figs_links = notebook.get_data_from_figures(figures)
+      net.update_nodes(text_labs + figs_labs)
+      net.update_edges(text_links + figs_links)

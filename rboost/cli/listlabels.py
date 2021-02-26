@@ -21,6 +21,6 @@ class ListLabels (RBoost):
       data = [[net.graph.nodes[n]['label'].name, net.graph.nodes[n]['label'].types]
               for n in net.graph.nodes]
 
-    df = pd.DataFrame(data=data, columns=['LABEL','TYPES'])
+    db = Database(df=pd.DataFrame(data=data, columns=['LABEL','TYPES']))
 
-    Database(df=df).show(tab=True)
+    db.show(full=True)

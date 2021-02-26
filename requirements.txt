@@ -3,7 +3,6 @@ matplotlib
 pandas
 networkx
 textract
-tabulate
 colorama
 nltk
 gensim

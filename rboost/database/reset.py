@@ -12,7 +12,7 @@ for file in os.listdir('./pickles/'):
 # create and init a new pickle for the files database
 name = './pickles/database.pkl'
 open(name, 'a').close()
-df = pd.DataFrame(columns=['FILENAME','FILETYPE','DATE'])
+df = pd.DataFrame(columns=['DATE','FILENAME','FILETYPE','REFERENCE'])
 df.to_pickle(name)
 
 

@@ -32,7 +32,7 @@ detection mode. An idea of the setup could be this one: SEE FIGURE "setup".
 
 
 
-#IMAGES
+#FIGURES
 -heat.tif
 Shape of the fibers tip obtained by varying the heat parameter and keeping fixed
 the others. The best shape is obtained using a value of the parameter of 350.
@@ -41,7 +41,7 @@ the others. The best shape is obtained using a value of the parameter of 350.
 Shape of the fibers tip obtained by varying the velocity and pulling parameters
 while choosing the best parameters value we found for the others. The best
 shapes are obtained using a value of the pulling parameter of 150 and 18 for the
-velocity or 200 and 18
+velocity or 200 and 18.
 
 -setup.jpg
 Here the internal arrangement of the components in the cryostat is shown. The

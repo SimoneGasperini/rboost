@@ -1,5 +1,4 @@
 import pandas as pd
-from tabulate import tabulate
 
 
 class Database ():
@@ -38,10 +37,11 @@ class Database ():
     self.df = self.df.iloc[0:0]
 
 
-  def show (self, tab=False):
+  def show (self, full=False):
 
-    if tab:
-      print(tabulate(self.df, headers='keys', tablefmt='psql'))
+    pd.set_option('colheader_justify', 'right')
 
-    else:
-      print(self.df)
+    if full:
+      pd.set_option('display.max_rows', None)
+
+    print(self.df)

@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 
+import colorama
 import pandas as pd
 
 from rboost.cli.rboost import RBoost
@@ -18,13 +19,13 @@ class UploadPdfs (RBoost):
   pdf_path = RBoost.PATH + '/rboost/database/pdfs/'
   pickle_path = RBoost.PATH + '/rboost/database/pickles/'
 
+  date = datetime.today().strftime('%d-%m-%Y')
+  failed = []
+
 
   def main (self):
 
     pdfs = self.get_pdfs()
-
-    self.date = datetime.today().strftime('%d-%m-%Y')
-    self.failed = []
 
     self.update_network(pdfs)
     self.update_database(pdfs)
@@ -37,7 +38,7 @@ class UploadPdfs (RBoost):
       filenames = [fname for fname in os.listdir(self.pdf_path)
                    if fname not in list(db.df['FILENAME'])]
 
-    pdfs = [PDF(path=self.pdf_path, name=name) for name in filenames]
+    pdfs = [PDF(abspath=self.pdf_path, name=name) for name in filenames]
 
     return pdfs
 
@@ -48,25 +49,29 @@ class UploadPdfs (RBoost):
 
       for pdf in pdfs:
 
-        print(f'Uploading "{pdf.name}"')
-        data = pdf.get_data()
+        print(f'>>> Uploading "{pdf.name}"')
 
-        if data is not None:
-          labsinfo, relations = data
-          net.update_nodes(labsinfo)
-          net.update_edges(relations)
+        try:
+          text = pdf.get_text()
 
-        else:
+        except UnicodeDecodeError:
+          colorama.init()
+          message = f'WARNING: The file "{pdf.name}" cannot be read'
+          print('>>> \033[93m' + message + '\033[0m')
           self.failed.append(pdf.name)
+          continue
+
+        new_labs, new_links = pdf.get_data_from_text(text)
+        net.update_nodes(new_labs)
+        net.update_edges(new_links)
 
 
   def update_database (self, pdfs):
 
     with Database(path=self.pickle_path, name='database.pkl') as db:
 
-      data = [[pdf.name, pdf.filetype, self.date] for pdf in pdfs
+      data = [[self.date, pdf.filename, pdf.filetype, pdf.reference] for pdf in pdfs
               if pdf.name not in self.failed]
 
       new_df = pd.DataFrame(data=data, columns=db.df.columns)
-
       db.df = db.df.append(new_df, ignore_index=True)

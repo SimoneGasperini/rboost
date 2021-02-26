@@ -1,32 +1,55 @@
-from itertools import combinations
-
-import pandas as pd
-
 from gensim.parsing.preprocessing import strip_punctuation
 from gensim.parsing.preprocessing import strip_non_alphanum
 
 from rboost.source.document.base import Document
+from rboost.source.document.figure import Figure
 
 
 class Notebook (Document):
 
 
-  def __init__ (self, path, dirname=None, name=None, filetype='notebook'):
+  def __init__ (self, abspath, dirname, name, filetype='notebook', reference=None):
 
-    date = input('>>> DATE (dd-mm-yyyy) : ')
-    author = input('>>> AUTHOR (name-surname) : ')
-    name = date + '_' + author + '.txt'
+    if name is None:
 
-    path = path + dirname + '/'
+      date = input('>>> DATE (dd-mm-yyyy) : ')
+      author = input('>>> AUTHOR (name-surname) : ')
+      name = date + '_' + author + '.txt'
+
+    path = abspath + dirname + '/'
+
     self.dirname = dirname
 
-    Document.__init__(self, path=path, name=name, filetype=filetype)
+    Document.__init__(self,
+                      path=path,
+                      name=name,
+                      filetype=filetype,
+                      reference=reference)
+
+
+  def __repr__ (self):
+
+    rep = self.filename + '\n\n'
+    rep += 'TEXT\n----\n'
+    rep += self.get_text() + '\n\n'
+
+    rep += 'FIGURES\n-------\n'
+    for fig in self.get_figures():
+      rep += fig.__repr__() + '\n'
+
+    return rep
+
+
+  @property
+  def filename (self):
+
+    return self.dirname + '/' + self.name
 
 
   def create_new (self):
 
     with open(self.path + self.name, mode='w') as file:
-      file.write('#TEXT\n\n\n#IMAGES\n\n\n')
+      file.write('#TEXT\n\n\n#FIGURES\n\n\n')
 
 
   def read_lines (self):
@@ -40,30 +63,55 @@ class Notebook (Document):
   def get_text (self):
 
     lines = self.read_lines()
-    lines.remove('#TEXT')
-
-    raw_text = ' '.join([line for line in lines[:lines.index('#IMAGES')]])
+    raw_text = ' '.join([line for line in lines[1:lines.index('#FIGURES')]])
     text = strip_non_alphanum(strip_punctuation(raw_text.lower()))
 
     return text
 
 
-  def get_data (self):
+  def get_figures (self):
 
-    filename = self.dirname + '/' + self.name
-    filetype = self.filetype
-    keywords = self.get_keywords(self.get_text(), ratio=0.2)
+    lines = self.read_lines()
+    figlines = [line for line in lines[lines.index('#FIGURES')+1:]]
 
-    labsinfo = [{'name'          : kw,
-                 'query_count'   : 0,
-                 'reading_count' : 0,
-                 'writing_count' : 1,
-                 'mentions'      : pd.DataFrame({'FILENAME' : [filename],
-                                                 'FILETYPE' : [filetype],
-                                                 'SCORE'    : [keywords[kw]]})
-                 }
-                for kw in keywords
-                ]
-    edges = list(combinations(keywords.keys(), 2))
+    fignames = [line[1:] for line in figlines if line.startswith('-')]
+    captions = self.get_fig_captions(figlines)
 
-    return labsinfo, edges
+    figures = [Figure(abspath=self.path, dirname=self.dirname,
+                      name=name, caption=cap, reference=self.filename)
+               for name, cap in zip(fignames, captions)]
+
+    return figures
+
+
+  def get_fig_captions (self, figlines):
+
+    captions = []; cap = None
+
+    for line in figlines:
+
+      if line == '': continue
+
+      if line.startswith('-'):
+        if cap is not None: captions.append(cap)
+        cap = ''
+
+      else:
+        cap = cap + ' ' + line
+
+    captions.append(cap)
+    captions = [strip_non_alphanum(strip_punctuation(cap.lower()))
+                if not cap == '' else None
+                for cap in captions]
+
+    return captions
+
+
+
+if __name__ == '__main__':
+
+  notebook = Notebook(abspath='../../database/notebooks/',
+                      dirname='photonic_crystals',
+                      name='23-02-2021_Enrico-Tartari.txt')
+
+  print(notebook)

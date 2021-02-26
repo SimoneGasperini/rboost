@@ -35,7 +35,7 @@ SEE FIGURE "medieval_law"
 
 
 
-#IMAGES
+#FIGURES
 -knox_case.jpg
 
 -medieval_law.jpg
