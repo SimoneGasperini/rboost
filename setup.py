@@ -18,8 +18,16 @@ def set_path ():
     line = 'PATH = ' + '"' + os.getcwd() + '"'
     file.write(line.replace('\\','/'))
 
-set_path()
 
+def download_wordnet ():
+
+  import nltk
+  nltk.download('wordnet')
+
+
+
+set_path()
+download_wordnet()
 
 setup (
 
