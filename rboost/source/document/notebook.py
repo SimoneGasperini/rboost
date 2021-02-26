@@ -86,11 +86,9 @@ class Notebook (Document):
 
   def get_fig_captions (self, figlines):
 
-    captions = []; cap = None
+    captions = []; cap = ''
 
     for line in figlines:
-
-      if line == '': continue
 
       if line.startswith('-'):
         if cap is not None: captions.append(cap)
