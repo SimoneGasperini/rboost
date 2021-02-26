@@ -10,8 +10,6 @@ class ListFiles (RBoost):
   List the files on RBoost database
   '''
 
-  pickle_path = RBoost.PATH + '/rboost/database/pickles/'
-
   _filetype = None
   _date = None
 
@@ -36,7 +34,7 @@ class ListFiles (RBoost):
 
   def main (self):
 
-    with Database(path=self.pickle_path, name='database.pkl') as db:
+    with Database(path=self.pkl_path, name='database.pkl') as db:
 
       if self._filetype is not None:
         db = db.filter_by('FILETYPE', value=self._filetype)

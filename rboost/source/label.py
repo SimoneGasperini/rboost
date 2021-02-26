@@ -9,7 +9,7 @@ class Label ():
                 types         = [],
                 queries_count = 0,
                 uploads_count = 0,
-                mentions      = pd.DataFrame(columns=['FILENAME','FILETYPE','SCORE'])):
+                mentions      = pd.DataFrame(columns=['FILENAME','TYPE','SCORE'])):
 
     self.name = name
     self.types = types
@@ -26,7 +26,7 @@ class Label ():
     self.mentions = self.mentions.append(labinfo['mentions'], ignore_index=True)
     self.mentions.sort_values(by=['SCORE'], ascending=False, ignore_index=True, inplace=True)
 
-    self.types = list(self.mentions['FILETYPE'].unique())
+    self.types = list(self.mentions['TYPE'].unique())
 
 
   def show (self):
@@ -43,5 +43,5 @@ if __name__== '__main__':
   from rboost.source.network import Network
 
   with Network(path='./../database/pickles/', name='network.pkl') as net:
-    label = net.graph.nodes['tip']['label']
+    label = net.graph.nodes['quantum']['label']
     label.show()

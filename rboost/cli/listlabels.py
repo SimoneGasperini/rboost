@@ -11,12 +11,10 @@ class ListLabels (RBoost):
   List the labels on RBoost database
   '''
 
-  pickle_path = RBoost.PATH + '/rboost/database/pickles/'
-
 
   def main (self):
 
-    with Network(path=self.pickle_path, name='network.pkl') as net:
+    with Network(path=self.pkl_path, name='network.pkl') as net:
 
       data = [[net.graph.nodes[n]['label'].name, net.graph.nodes[n]['label'].types]
               for n in net.graph.nodes]

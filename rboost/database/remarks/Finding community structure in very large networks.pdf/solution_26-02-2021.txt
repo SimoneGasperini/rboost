@@ -1,0 +1,7 @@
+While finding the global maximum modularity over all possible divisions seems hard in general, reasonably good solutions
+can be found with approximate optimization techniques.
+One possible method is based on greedy optimization in which, starting with each vertex being the sole member of a
+community of one, we repeatedly join together the two communities whose amalgamation produces the largest increase in Q.
+For a network of n vertices, after n−1 such joins we are left with a single community and the algorithm stops.
+The entire process can be represented as a tree whose leaves are the vertices of the original network and whose internal
+nodes correspond to the joins.

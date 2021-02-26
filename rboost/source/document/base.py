@@ -10,13 +10,8 @@ class Document ():
 
   keywords_ratio = {'standard' : 0.01,
                     'notebook' : 0.1,
-                    'caption'  : None,
+                    'caption'  : 0.6,
                     'remark'   : 0.6}
-
-  keywords_num = {'standard' : None,
-                  'notebook' : None,
-                  'caption'  : 2,
-                  'remark'   : None}
 
 
   def __init__ (self, path, name, filetype, reference):
@@ -28,13 +23,12 @@ class Document ():
 
 
   @staticmethod
-  def get_keywords (text, typing):
+  def get_keywords (text, filetype):
 
+    typing = filetype[:6] if filetype.startswith('remark:') else filetype
     ratio = Document.keywords_ratio[typing]
-    words = Document.keywords_num[typing]
 
-    raw_kws = keywords(text, ratio=ratio, words=words,
-                       scores=True, lemmatize=True, split=True)
+    raw_kws = keywords(text, ratio=ratio, scores=True, lemmatize=True, split=True)
 
     l = nltk.wordnet.WordNetLemmatizer()
     kws = {l.lemmatize(word) : round(score,3) for (word, score) in raw_kws}
@@ -45,15 +39,16 @@ class Document ():
   def get_data_from_text (self, text):
 
     filename = self.filename
-    typing = self.filetype
+    filetype = self.filetype
+    labtype = filetype[7:] if filetype.startswith('remark:') else filetype
 
-    keywords = Document.get_keywords(text=text, typing=typing)
+    keywords = Document.get_keywords(text=text, filetype=filetype)
 
     labs = [{'name'          : kw,
              'queries_count' : 0,
              'uploads_count' : 1,
              'mentions'      : pd.DataFrame({'FILENAME' : [filename],
-                                             'FILETYPE' : [typing],
+                                             'TYPE'     : [labtype],
                                              'SCORE'    : [keywords[kw]]})
              }
             for kw in keywords

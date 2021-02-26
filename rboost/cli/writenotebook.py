@@ -16,9 +16,6 @@ class WriteNotebook (RBoost):
   Write a notebook on RBoost database
   '''
 
-  nb_path = RBoost.PATH + '/rboost/database/notebooks/'
-  pickle_path = RBoost.PATH + '/rboost/database/pickles/'
-
 
   def main (self, dirname):
 
@@ -47,7 +44,7 @@ class WriteNotebook (RBoost):
 
     notebook = Notebook(abspath=self.nb_path, dirname=dirname, name=None)
 
-    with Database(path=WriteNotebook.pickle_path, name='database.pkl') as db:
+    with Database(path=self.pkl_path, name='database.pkl') as db:
 
       if notebook.filename in list(db.df['FILENAME']):
         colorama.init()
@@ -98,14 +95,14 @@ class WriteNotebook (RBoost):
     text = notebook.get_text()
     figures = notebook.get_figures()
 
-    with Database(path=self.pickle_path, name='database.pkl') as db:
+    with Database(path=self.pkl_path, name='database.pkl') as db:
 
       data = [[date, fig.filename, fig.filetype, fig.reference] for fig in figures]
       data.append([date, notebook.filename, notebook.filetype, notebook.reference])
       new_df = pd.DataFrame(data=data, columns=db.df.columns)
       db.df = db.df.append(new_df, ignore_index=True)
 
-    with Network(path=self.pickle_path, name='network.pkl') as net:
+    with Network(path=self.pkl_path, name='network.pkl') as net:
 
       text_labs, text_links = notebook.get_data_from_text(text)
       figs_labs, figs_links = notebook.get_data_from_figures(figures)

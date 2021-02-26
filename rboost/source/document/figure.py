@@ -38,15 +38,15 @@ class Figure (Document):
     if self.caption is None: return None    
 
     filename = self.filename
-    typing = 'caption'
+    filetype = labtype = 'caption'
 
-    keywords = Document.get_keywords(text=self.caption, typing=typing)
+    keywords = Document.get_keywords(text=self.caption, filetype=filetype)
 
     labs = [{'name'          : kw,
              'queries_count' : 0,
              'uploads_count' : 1,
              'mentions'      : pd.DataFrame({'FILENAME' : [filename],
-                                             'FILETYPE' : [typing],
+                                             'TYPE'     : [labtype],
                                              'SCORE'    : [keywords[kw]]})
              }
             for kw in keywords

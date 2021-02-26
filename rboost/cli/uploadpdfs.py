@@ -16,9 +16,6 @@ class UploadPdfs (RBoost):
   Upload the pdf files on RBoost database
   '''
 
-  pdf_path = RBoost.PATH + '/rboost/database/pdfs/'
-  pickle_path = RBoost.PATH + '/rboost/database/pickles/'
-
   date = datetime.today().strftime('%d-%m-%Y')
   failed = []
 
@@ -33,7 +30,7 @@ class UploadPdfs (RBoost):
 
   def get_pdfs (self):
 
-    with Database(path=self.pickle_path, name='database.pkl') as db:
+    with Database(path=self.pkl_path, name='database.pkl') as db:
 
       filenames = [fname for fname in os.listdir(self.pdf_path)
                    if fname not in list(db.df['FILENAME'])]
@@ -45,7 +42,7 @@ class UploadPdfs (RBoost):
 
   def update_network (self, pdfs):
 
-    with Network(path=self.pickle_path, name='network.pkl') as net:
+    with Network(path=self.pkl_path, name='network.pkl') as net:
 
       for pdf in pdfs:
 
@@ -68,7 +65,7 @@ class UploadPdfs (RBoost):
 
   def update_database (self, pdfs):
 
-    with Database(path=self.pickle_path, name='database.pkl') as db:
+    with Database(path=self.pkl_path, name='database.pkl') as db:
 
       data = [[self.date, pdf.filename, pdf.filetype, pdf.reference] for pdf in pdfs
               if pdf.name not in self.failed]
