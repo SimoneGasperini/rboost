@@ -1,3 +1,6 @@
+import os
+import sys
+from stat import S_IREAD, S_IRGRP, S_IROTH, S_IWUSR
 from itertools import combinations
 
 import pandas as pd
@@ -5,14 +8,16 @@ import pandas as pd
 import nltk
 from gensim.summarization import keywords
 
+from rboost.cli.rboost import RBoost
+
 
 class Document ():
 
 
-  def __init__ (self, path, name, filetype, reference):
+  def __init__ (self, name, path, filetype, reference):
 
-    self.path = path
     self.name = name
+    self.path = path
     self.filetype = filetype
     self.reference = reference
 
@@ -21,7 +26,7 @@ class Document ():
   def get_keywords (text, filetype):
 
     typing = filetype[:6] if filetype.startswith('remark:') else filetype
-    ratio = Document.keywords_ratio[typing]
+    ratio = RBoost._keyword_ratios[typing]
 
     raw_kws = keywords(text, ratio=ratio, scores=True, lemmatize=True, split=True)
 
@@ -29,6 +34,23 @@ class Document ():
     kws = {l.lemmatize(word) : round(score,3) for (word, score) in raw_kws}
 
     return kws
+
+
+  def open_editor (self):
+
+    file = self.path + self.name
+    os.chmod(file, S_IWUSR|S_IREAD)
+
+    if sys.platform.startswith('win'):
+      os.system('notepad ' + file)
+      os.chmod(file, S_IREAD|S_IRGRP|S_IROTH)
+
+    elif sys.platform.startswith('linux'):
+      os.system('gedit ' + file)
+      os.chmod(file, S_IREAD|S_IRGRP|S_IROTH)
+
+    else:
+      raise SystemError
 
 
   def get_data_from_text (self, text):

@@ -1,13 +1,12 @@
 import pandas as pd
 
 from rboost.cli.rboost import RBoost
-DB_PATH = RBoost.database_pkl
 
 
 class Database ():
 
 
-  def __init__ (self, pathname=DB_PATH, df=None):
+  def __init__ (self, pathname=RBoost._database_pkl, df=None):
 
     self.pathname = pathname
     self.df = df

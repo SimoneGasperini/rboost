@@ -1,3 +1,5 @@
+27-02-2021_Enrico-Tartari.txt
+-----------------------------
 #TEXT
 Photonics is the technology of photons (as electronics is the technology of electrons)
 and promises to be the new century's driving force in the advancement of, mainly but 
@@ -27,3 +29,11 @@ SEE FIGURE "photonic_crystals_project".
 -photonic_crystals_review.gif
 
 -photonic_crystals_project.ppm
+
+
+
+####################################################################################################
+####################################################################################################
+
+
+

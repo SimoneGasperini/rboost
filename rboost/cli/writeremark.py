@@ -17,63 +17,74 @@ class WriteRemark (RBoost):
   Write a special remark on RBoost database
   '''
 
+  _ref = None
   _type = 'standard'
 
 
-  @cli.switch('--type', str)
+  @cli.switch ('--ref', str, mandatory=True)
+  def ref (self, ref):
+    '''
+    Specify the original document
+    '''
+
+    self._ref = ref
+
+
+  @cli.switch ('--type', str)
   def type (self, type):
     '''
     Specify the remark type
     '''
 
-    if type not in self.remark_types:
+    if type not in self._remark_types:
       colorama.init()
       message = 'FAIL: Invalid remark type. Choose among the following types:\n\t'
-      types = '\n\t'.join(self.remark_types)
+      types = '\n\t'.join(self._remark_types)
       print('>>> \033[91m' + message + '\033[0m' + types)
       sys.exit()
 
     self._type = type
 
 
+  def main (self, name):
 
-  def main (self, reference):
+    dirpath = self._remarks_path + self._ref + '/'
+    os.makedirs(dirpath, exist_ok=True)
 
-    dirname = reference.replace('/','_')
-    os.makedirs(self.remarks_path + dirname, exist_ok=True)
+    name = self._date + '_' + name + '.txt'
+    remark = Remark(path=dirpath, name=name, special=self._type, reference=self._ref)
+    self.check_file (remark)
 
-    remark = Remark(abspath=self.remarks_path, dirname=dirname,
-                    special=self._type, date=self.date, reference=reference)
+    remark.open_editor()
 
-    self.open_editor(remark)
     self.upload_file(remark)
 
 
-  def open_editor (self, remark):
+  @staticmethod
+  def check_file (remark):
 
-    if sys.platform.startswith('win'):
-      os.system('notepad ' + remark.path + remark.name)
+    with Database() as db:
 
-    elif sys.platform.startswith('linux'):
-      os.system('gedit ' + remark.path + remark.name)
+      if remark.filename in list(db.df['FILENAME']):
+        raise NotImplementedError('Not implemented yet!') # TODO
 
-    else:
-      raise SystemError
+    if remark.name not in os.listdir(remark.path):
+      open(remark.path + remark.name, mode='w').close()
 
 
-  def upload_file (self, remark):
+  @staticmethod
+  def upload_file (remark):
 
     print(f'>>> Are you sure to upload the file "{remark.name}" on RBoost database?')
     if not input('>>> (y/n) ') == 'y': sys.exit()
 
     print(f'>>> Uploading "{remark.filename}"')
-
     text = remark.get_text()
 
     with Database() as db:
 
-      new_df = pd.DataFrame(data=[[self.date, remark.name, remark.filetype, remark.reference]],
-                            columns=db.df.columns)
+      data = [[RBoost._date, remark.name, remark.filetype, remark.reference]]
+      new_df = pd.DataFrame(data=data, columns=db.df.columns)
       db.df = db.df.append(new_df, ignore_index=True)
 
     with Network() as net:

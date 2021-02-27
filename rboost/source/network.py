@@ -4,15 +4,14 @@ import networkx as nx
 import numpy as np
 import pylab as plt
 
-from rboost.source.label import Label
 from rboost.cli.rboost import RBoost
-NET_PATH = RBoost.network_pkl
+from rboost.source.label import Label
 
 
 class Network ():
 
 
-  def __init__ (self, pathname=NET_PATH, graph=None):
+  def __init__ (self, pathname=RBoost._network_pkl, graph=None):
 
     self.pathname = pathname
     self.graph = graph

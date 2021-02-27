@@ -1,3 +1,5 @@
+26-02-2021_Enrico-Tartari.txt
+-----------------------------
 #TEXT
 Tapered fiber preparation with micropipette puller instrument:
 
@@ -20,16 +22,7 @@ tapered fiber tip dimensions is:
 Heat(350) Pull(150) Delay (100) SEE FIGURE "best"
 
 The protocol of fabrication is totally repeatable.
-
 Tomorrow we will try to add the parameter "velocity" to see if something changes.
-
-The idea will be to produce a thin enough taperede fiber to get a intense enough evanescent field at the
-tip of the fiber to be able to couple it with the single photon source dipole radiation. 
-
-Then we will try to implement the fiber to our setup and we will be able to move the fiber over the sample 
-using a piezoelectric stage. This will be fundamental to optimize the coupling both in excitation and 
-detection mode. An idea of the setup could be this one: SEE FIGURE "setup".
-
 
 
 #FIGURES
@@ -43,8 +36,35 @@ while choosing the best parameters value we found for the others. The best
 shapes are obtained using a value of the pulling parameter of 150 and 18 for the
 velocity or 200 and 18.
 
+
+
+####################################################################################################
+####################################################################################################
+
+
+
+27-02-2021_Enrico-Tartari.txt
+-----------------------------
+#TEXT
+The idea is to produce a thin enough taperede fiber to get a intense enough evanescent field at the
+tip of the fiber to be able to couple it with the single photon source dipole radiation. 
+
+Then we try to implement the fiber to our setup and we will be able to move the fiber over the sample 
+using a piezoelectric stage. This is fundamental to optimize the coupling both in excitation and 
+detection mode. An idea of the setup could be this one: SEE FIGURE "setup".
+
+
+#FIGURES
 -setup.jpg
 Here the internal arrangement of the components in the cryostat is shown. The
 piezoelectric on the left supports the tapered nanofiber. The piezoelectric closest
 to the reader supports the objective. The sample is the stage farthest from the
 reader.
+
+
+
+####################################################################################################
+####################################################################################################
+
+
+

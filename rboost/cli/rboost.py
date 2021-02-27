@@ -13,34 +13,33 @@ class RBoost (cli.Application):
   VERSION = '0.0.1'
 
 
-  pdfs_path      = PATH + '/rboost/database/pdfs/'
-  notebooks_path = PATH + '/rboost/database/notebooks/'
-  remarks_path   = PATH + '/rboost/database/remarks/'
+  _pdfs_path      = PATH + '/rboost/database/pdfs/'
+  _notebooks_path = PATH + '/rboost/database/notebooks/'
+  _remarks_path   = PATH + '/rboost/database/remarks/'
 
-  database_pkl = PATH + '/rboost/database/pickles/database.pkl'
-  network_pkl  = PATH + '/rboost/database/pickles/network.pkl'
-
-
-  remark_types = ['standard',
-                  'problem',
-                  'solution',
-                  'technique',
-                  'reasoning',
-                  'note']
+  _database_pkl = PATH + '/rboost/database/pickles/database.pkl'
+  _network_pkl  = PATH + '/rboost/database/pickles/network.pkl'
 
 
-  document_types = ['standard',
-                    'notebook',
-                    'figure'] + ['remark:' + t for t in remark_types]
+  _remark_types = ['standard',
+                   'problem',
+                   'solution',
+                   'technique',
+                   'reasoning',
+                   'note']
+
+  _document_types = ['standard',
+                     'notebook',
+                     'figure'] + ['remark:' + t
+                                   for t in _remark_types]
+
+  _keyword_ratios = {'standard' : 0.01,
+                     'notebook' : 0.1,
+                     'caption'  : 0.6,
+                     'remark'   : 0.6}
 
 
-  keyword_ratios = {'standard' : 0.01,
-                    'notebook' : 0.1,
-                    'caption'  : 0.6,
-                    'remark'   : 0.6}
-
-
-  date = datetime.datetime.today().strftime('%d-%m-%Y')
+  _date = datetime.datetime.today().strftime('%d-%m-%Y')
 
 
   def main (self):

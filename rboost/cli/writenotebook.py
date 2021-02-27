@@ -1,8 +1,9 @@
 import os
 import sys
+from stat import S_IREAD, S_IRGRP, S_IROTH, S_IWUSR
 
-import pandas as pd
 import colorama
+import pandas as pd
 
 from rboost.cli.rboost import RBoost
 from rboost.source.database import Database
@@ -19,20 +20,28 @@ class WriteNotebook (RBoost):
 
   def main (self, dirname):
 
-    self.check_dir(dirname=dirname)
-    os.makedirs(self.notebooks_path + dirname, exist_ok=True)
+    dirpath = self._notebooks_path + dirname + '/'
 
-    notebook = self.create_file(dirname)
-    self.open_editor(notebook)
+    self.check_dir(dirpath)
+    os.makedirs(dirpath, exist_ok=True)
 
-    self.check_refs(notebook)
+    notebook = Notebook(path=dirpath, name=self.get_name())
+    self.check_file(notebook)
+
+    notebook.open_editor()
+    notebook.check_figs()
+
     self.upload_file(notebook)
+    self.update_document(dirname, notebook)
 
 
-  def check_dir (self, dirname):
+  @staticmethod
+  def check_dir (dirpath):
 
-    if os.path.exists(self.notebooks_path + dirname):
-      print(f'>>> The notebook "{dirname}" already exists, do you want to update it?')
+    dirname = os.path.basename(dirpath[:-1])
+
+    if os.path.exists(dirpath):
+      print(f'>>> The notebook "{dirname}" already exists, do you want to add a page?')
       if not input('>>> (y/n) ') == 'y': sys.exit()
 
     else:
@@ -40,64 +49,45 @@ class WriteNotebook (RBoost):
       if not input('>>> (y/n) ') == 'y': sys.exit()
 
 
-  def create_file (self, dirname):
+  @staticmethod
+  def get_name ():
 
-    notebook = Notebook(abspath=self.notebooks_path, dirname=dirname)
+    date = input('>>> Date (dd-mm-yyyy) : ')
+    author = input('>>> Author (name-surname) : ')
+    name = date + '_' + author + '.txt'
+
+    return name
+
+
+  @staticmethod
+  def check_file (notebook):
 
     with Database() as db:
 
       if notebook.filename in list(db.df['FILENAME']):
         colorama.init()
-        message = f'FAIL: The file "{notebook.name}" already exists in RBoost database'
+        message = f'FAIL: The file "{notebook.filename}" already exists in RBoost database'
         print('>>> \033[91m' + message + '\033[0m')
         sys.exit()
 
-    if notebook.name not in os.listdir(self.notebooks_path + dirname):
-      notebook.create_new()
-
-    return notebook
-
-
-  def open_editor (self, notebook):
-
-    if sys.platform.startswith('win'):
-      os.system('notepad ' + notebook.path + notebook.name)
-
-    elif sys.platform.startswith('linux'):
-      os.system('gedit ' + notebook.path + notebook.name)
-
-    else:
-      raise SystemError
+    if notebook.name not in os.listdir(notebook.path):
+      with open(notebook.path + notebook.name, mode='w') as file:
+        file.write('#TEXT\n\n#FIGURES\n\n')
 
 
-  def check_refs (self, notebook):
-
-    lines = notebook.read_lines()
-
-    images = [line[1:] for line in lines[lines.index('#FIGURES')+1:] if line.startswith('-')]
-    not_found = [img for img in images if img not in os.listdir(notebook.path)]
-
-    if not_found:
-      colorama.init()
-      message = 'FAIL: The following files do not exist in the notebook directory:\n\t'
-      figures = '\n\t'.join(not_found)
-      print('>>> \033[91m' + message + '\033[0m' + figures)
-      sys.exit()
-
-
-  def upload_file (self, notebook):
+  @staticmethod
+  def upload_file (notebook):
 
     print(f'>>> Are you sure to upload the file "{notebook.filename}" on RBoost database?')
     if not input('>>> (y/n) ') == 'y': sys.exit()
 
     print(f'>>> Uploading "{notebook.filename}"')
-
-    date = notebook.name[:10]
-    text = notebook.get_text()
+    text = notebook.get_text_paragraph()
     figures = notebook.get_figures()
 
     with Database() as db:
 
+      date = notebook.name[:10]
       data = [[date, fig.filename, fig.filetype, fig.reference] for fig in figures]
       data.append([date, notebook.filename, notebook.filetype, notebook.reference])
       new_df = pd.DataFrame(data=data, columns=db.df.columns)
@@ -109,3 +99,22 @@ class WriteNotebook (RBoost):
       figs_labs, figs_links = notebook.get_data_from_figures(figures)
       net.update_nodes(text_labs + figs_labs)
       net.update_edges(text_links + figs_links)
+
+
+  @staticmethod
+  def update_document (dirname, notebook):
+
+    dirpath = RBoost._notebooks_path + dirname + '/'
+    filename = dirname + '.txt'
+
+    title = notebook.name + '\n' + ('-' * len(notebook.name)) + '\n'
+    text = notebook.read()
+    separator = ('\n' * 4) + (('#'*100 + '\n') * 2) + ('\n' * 3)
+
+    if filename in os.listdir(dirpath):
+      os.chmod(dirpath + filename, S_IWUSR|S_IREAD)
+
+    with open(dirpath + filename, mode='a') as doc:
+      doc.write(title + text + separator)
+
+    os.chmod(dirpath + filename, S_IREAD|S_IRGRP|S_IROTH)
