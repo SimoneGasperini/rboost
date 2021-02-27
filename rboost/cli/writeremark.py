@@ -1,7 +1,7 @@
 import os
 import sys
-from datetime import datetime
 
+import colorama
 import pandas as pd
 from plumbum import cli
 
@@ -17,24 +17,32 @@ class WriteRemark (RBoost):
   Write a special remark on RBoost database
   '''
 
+  _type = 'standard'
 
-  @cli.switch('--type', str, mandatory=True)
+
+  @cli.switch('--type', str)
   def type (self, type):
     '''
     Specify the remark type
     '''
 
+    if type not in self.remark_types:
+      colorama.init()
+      message = 'FAIL: Invalid remark type. Choose among the following types:\n\t'
+      types = '\n\t'.join(self.remark_types)
+      print('>>> \033[91m' + message + '\033[0m' + types)
+      sys.exit()
+
     self._type = type
 
-  date = datetime.today().strftime('%d-%m-%Y')
 
 
   def main (self, reference):
 
     dirname = reference.replace('/','_')
-    os.makedirs(self.r_path + dirname, exist_ok=True)
+    os.makedirs(self.remarks_path + dirname, exist_ok=True)
 
-    remark = Remark(abspath=self.r_path, dirname=dirname,
+    remark = Remark(abspath=self.remarks_path, dirname=dirname,
                     special=self._type, date=self.date, reference=reference)
 
     self.open_editor(remark)
@@ -62,13 +70,13 @@ class WriteRemark (RBoost):
 
     text = remark.get_text()
 
-    with Database(path=self.pkl_path, name='database.pkl') as db:
+    with Database() as db:
 
       new_df = pd.DataFrame(data=[[self.date, remark.name, remark.filetype, remark.reference]],
                             columns=db.df.columns)
       db.df = db.df.append(new_df, ignore_index=True)
 
-    with Network(path=self.pkl_path, name='network.pkl') as net:
+    with Network() as net:
 
       labs, links = remark.get_data_from_text(text)
       net.update_nodes(labs)

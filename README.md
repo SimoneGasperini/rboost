@@ -18,7 +18,7 @@ python setup.py install
 ```
 
 
-- run the program --help:
+- run the program:
 ```bash
-rboost --help
+rboost
 ```

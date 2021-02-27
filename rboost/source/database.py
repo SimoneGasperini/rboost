@@ -1,27 +1,28 @@
 import pandas as pd
 
+from rboost.cli.rboost import RBoost
+DB_PATH = RBoost.database_pkl
+
 
 class Database ():
 
 
-  def __init__ (self, path=None, name=None, df=None):
+  def __init__ (self, pathname=DB_PATH, df=None):
 
-    self.path = path
-    self.name = name
-
+    self.pathname = pathname
     self.df = df
 
 
   def __enter__ (self):
 
-    self.df = pd.read_pickle(self.path + self.name)
+    self.df = pd.read_pickle(self.pathname)
 
     return self
 
 
   def __exit__ (self, exc_type, exc_value, exc_traceback):
 
-    self.df.to_pickle(self.path + self.name)
+    self.df.to_pickle(self.pathname)
 
 
   def filter_by (self, column, value):

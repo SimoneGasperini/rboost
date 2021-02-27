@@ -20,7 +20,7 @@ class WriteNotebook (RBoost):
   def main (self, dirname):
 
     self.check_dir(dirname=dirname)
-    os.makedirs(self.nb_path + dirname, exist_ok=True)
+    os.makedirs(self.notebooks_path + dirname, exist_ok=True)
 
     notebook = self.create_file(dirname)
     self.open_editor(notebook)
@@ -31,7 +31,7 @@ class WriteNotebook (RBoost):
 
   def check_dir (self, dirname):
 
-    if os.path.exists(self.nb_path + dirname):
+    if os.path.exists(self.notebooks_path + dirname):
       print(f'>>> The notebook "{dirname}" already exists, do you want to update it?')
       if not input('>>> (y/n) ') == 'y': sys.exit()
 
@@ -42,9 +42,9 @@ class WriteNotebook (RBoost):
 
   def create_file (self, dirname):
 
-    notebook = Notebook(abspath=self.nb_path, dirname=dirname, name=None)
+    notebook = Notebook(abspath=self.notebooks_path, dirname=dirname)
 
-    with Database(path=self.pkl_path, name='database.pkl') as db:
+    with Database() as db:
 
       if notebook.filename in list(db.df['FILENAME']):
         colorama.init()
@@ -52,7 +52,7 @@ class WriteNotebook (RBoost):
         print('>>> \033[91m' + message + '\033[0m')
         sys.exit()
 
-    if notebook.name not in os.listdir(self.nb_path + dirname):
+    if notebook.name not in os.listdir(self.notebooks_path + dirname):
       notebook.create_new()
 
     return notebook
@@ -79,8 +79,9 @@ class WriteNotebook (RBoost):
 
     if not_found:
       colorama.init()
-      message = 'FAIL: The following images files do not exist:\n\t' + '\n\t'.join(not_found)
-      print('>>> \033[91m' + message + '\033[0m')
+      message = 'FAIL: The following files do not exist in the notebook directory:\n\t'
+      figures = '\n\t'.join(not_found)
+      print('>>> \033[91m' + message + '\033[0m' + figures)
       sys.exit()
 
 
@@ -95,14 +96,14 @@ class WriteNotebook (RBoost):
     text = notebook.get_text()
     figures = notebook.get_figures()
 
-    with Database(path=self.pkl_path, name='database.pkl') as db:
+    with Database() as db:
 
       data = [[date, fig.filename, fig.filetype, fig.reference] for fig in figures]
       data.append([date, notebook.filename, notebook.filetype, notebook.reference])
       new_df = pd.DataFrame(data=data, columns=db.df.columns)
       db.df = db.df.append(new_df, ignore_index=True)
 
-    with Network(path=self.pkl_path, name='network.pkl') as net:
+    with Network() as net:
 
       text_labs, text_links = notebook.get_data_from_text(text)
       figs_labs, figs_links = notebook.get_data_from_figures(figures)

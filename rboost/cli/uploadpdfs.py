@@ -30,19 +30,19 @@ class UploadPdfs (RBoost):
 
   def get_pdfs (self):
 
-    with Database(path=self.pkl_path, name='database.pkl') as db:
+    with Database() as db:
 
-      filenames = [fname for fname in os.listdir(self.pdf_path)
+      filenames = [fname for fname in os.listdir(self.pdfs_path)
                    if fname not in list(db.df['FILENAME'])]
 
-    pdfs = [PDF(abspath=self.pdf_path, name=name) for name in filenames]
+    pdfs = [PDF(abspath=self.pdfs_path, name=name) for name in filenames]
 
     return pdfs
 
 
   def update_network (self, pdfs):
 
-    with Network(path=self.pkl_path, name='network.pkl') as net:
+    with Network() as net:
 
       for pdf in pdfs:
 
@@ -65,7 +65,7 @@ class UploadPdfs (RBoost):
 
   def update_database (self, pdfs):
 
-    with Database(path=self.pkl_path, name='database.pkl') as db:
+    with Database() as db:
 
       data = [[self.date, pdf.filename, pdf.filetype, pdf.reference] for pdf in pdfs
               if pdf.name not in self.failed]

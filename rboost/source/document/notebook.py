@@ -8,7 +8,7 @@ from rboost.source.document.figure import Figure
 class Notebook (Document):
 
 
-  def __init__ (self, abspath, dirname, name, filetype='notebook', reference=None):
+  def __init__ (self, abspath, dirname, name=None, filetype='notebook', reference=None):
 
     if name is None:
 

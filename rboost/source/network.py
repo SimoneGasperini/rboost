@@ -5,29 +5,29 @@ import numpy as np
 import pylab as plt
 
 from rboost.source.label import Label
+from rboost.cli.rboost import RBoost
+NET_PATH = RBoost.network_pkl
 
 
 class Network ():
 
 
-  def __init__ (self, path, name):
+  def __init__ (self, pathname=NET_PATH, graph=None):
 
-    self.path = path
-    self.name = name
-
-    self.graph = None
+    self.pathname = pathname
+    self.graph = graph
 
 
   def __enter__ (self):
 
-    self.graph = nx.read_gpickle(self.path + self.name)
+    self.graph = nx.read_gpickle(self.pathname)
 
     return self
 
 
   def __exit__ (self, exc_type, exc_value, exc_traceback):
 
-    nx.write_gpickle(self.graph, self.path + self.name)
+    nx.write_gpickle(self.graph, self.pathname)
 
 
   def add_new_nodes (self, labs):
@@ -120,5 +120,5 @@ class Network ():
 
 if __name__== '__main__':
 
-  with Network(path='./../database/pickles/', name='network.pkl') as net:
+  with Network() as net:
     net.show()

@@ -8,11 +8,6 @@ from gensim.summarization import keywords
 
 class Document ():
 
-  keywords_ratio = {'standard' : 0.01,
-                    'notebook' : 0.1,
-                    'caption'  : 0.6,
-                    'remark'   : 0.6}
-
 
   def __init__ (self, path, name, filetype, reference):
 

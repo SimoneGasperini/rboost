@@ -14,11 +14,11 @@ class ListLabels (RBoost):
 
   def main (self):
 
-    with Network(path=self.pkl_path, name='network.pkl') as net:
+    with Network() as net:
 
       data = [[net.graph.nodes[n]['label'].name, net.graph.nodes[n]['label'].types]
               for n in net.graph.nodes]
 
-    db = Database(df=pd.DataFrame(data=data, columns=['LABEL','TYPES']))
+    db = Database(pathname=None, df=pd.DataFrame(data=data, columns=['LABEL','TYPES']))
 
     db.show(full=True)
