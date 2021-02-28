@@ -16,9 +16,10 @@ class RBoost (cli.Application):
   _pdfs_path      = PATH + '/rboost/database/pdfs/'
   _notebooks_path = PATH + '/rboost/database/notebooks/'
   _remarks_path   = PATH + '/rboost/database/remarks/'
+  _pickles_path   = PATH + '/rboost/database/pickles/'
 
-  _database_pkl = PATH + '/rboost/database/pickles/database.pkl'
-  _network_pkl  = PATH + '/rboost/database/pickles/network.pkl'
+  _database_pkl = _pickles_path + 'database.pkl'
+  _network_pkl  = _pickles_path + 'network.pkl'
 
 
   _remark_types = ['standard',

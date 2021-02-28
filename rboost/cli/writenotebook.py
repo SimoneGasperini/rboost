@@ -64,9 +64,9 @@ class WriteNotebook (RBoost):
 
     with Database() as db:
 
-      if notebook.filename in list(db.df['FILENAME']):
+      if notebook.docname in list(db.df['DOCNAME']):
         colorama.init()
-        message = f'FAIL: The file "{notebook.filename}" already exists in RBoost database'
+        message = f'FAIL: The file "{notebook.docname}" already exists in RBoost database'
         print('>>> \033[91m' + message + '\033[0m')
         sys.exit()
 
@@ -78,18 +78,18 @@ class WriteNotebook (RBoost):
   @staticmethod
   def upload_file (notebook):
 
-    print(f'>>> Are you sure to upload the file "{notebook.filename}" on RBoost database?')
+    print(f'>>> Are you sure to upload the file "{notebook.docname}" on RBoost database?')
     if not input('>>> (y/n) ') == 'y': sys.exit()
 
-    print(f'>>> Uploading "{notebook.filename}"')
+    print(f'>>> Uploading "{notebook.docname}"')
     text = notebook.get_text_paragraph()
     figures = notebook.get_figures()
 
     with Database() as db:
 
       date = notebook.name[:10]
-      data = [[date, fig.filename, fig.filetype, fig.reference] for fig in figures]
-      data.append([date, notebook.filename, notebook.filetype, notebook.reference])
+      data = [[date, fig.docname, fig.doctype, fig.reference] for fig in figures]
+      data.append([date, notebook.docname, notebook.doctype, notebook.reference])
       new_df = pd.DataFrame(data=data, columns=db.df.columns)
       db.df = db.df.append(new_df, ignore_index=True)
 
@@ -105,16 +105,16 @@ class WriteNotebook (RBoost):
   def update_document (dirname, notebook):
 
     dirpath = RBoost._notebooks_path + dirname + '/'
-    filename = dirname + '.txt'
+    docname = dirname + '.txt'
 
     title = notebook.name + '\n' + ('-' * len(notebook.name)) + '\n'
     text = notebook.read()
     separator = ('\n' * 4) + (('#'*100 + '\n') * 2) + ('\n' * 3)
 
-    if filename in os.listdir(dirpath):
-      os.chmod(dirpath + filename, S_IWUSR|S_IREAD)
+    if docname in os.listdir(dirpath):
+      os.chmod(dirpath + docname, S_IWUSR|S_IREAD)
 
-    with open(dirpath + filename, mode='a') as doc:
+    with open(dirpath + docname, mode='a') as doc:
       doc.write(title + text + separator)
 
-    os.chmod(dirpath + filename, S_IREAD|S_IRGRP|S_IROTH)
+    os.chmod(dirpath + docname, S_IREAD|S_IRGRP|S_IROTH)

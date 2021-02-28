@@ -47,7 +47,7 @@ class ListDocuments (RBoost):
     with Database() as db:
 
       if self._type is not None:
-        db = db.filter_by('FILETYPE', value=self._type)
+        db = db.filter_by('DOCTYPE', value=self._type)
 
       if self._date is not None:
         db = db.filter_by('DATE', value=self._date)

@@ -65,8 +65,8 @@ class WriteRemark (RBoost):
 
     with Database() as db:
 
-      if remark.filename in list(db.df['FILENAME']):
-        raise NotImplementedError('Not implemented yet!') # TODO
+      if remark.docname in list(db.df['DOCNAME']):
+        raise NotImplementedError('Not implemented yet')
 
     if remark.name not in os.listdir(remark.path):
       open(remark.path + remark.name, mode='w').close()
@@ -78,12 +78,12 @@ class WriteRemark (RBoost):
     print(f'>>> Are you sure to upload the file "{remark.name}" on RBoost database?')
     if not input('>>> (y/n) ') == 'y': sys.exit()
 
-    print(f'>>> Uploading "{remark.filename}"')
+    print(f'>>> Uploading "{remark.docname}"')
     text = remark.get_text()
 
     with Database() as db:
 
-      data = [[RBoost._date, remark.name, remark.filetype, remark.reference]]
+      data = [[RBoost._date, remark.name, remark.doctype, remark.reference]]
       new_df = pd.DataFrame(data=data, columns=db.df.columns)
       db.df = db.df.append(new_df, ignore_index=True)
 

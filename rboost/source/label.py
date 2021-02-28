@@ -2,14 +2,35 @@ import pandas as pd
 
 
 class Label ():
+  '''
+  Class for the label object
 
+
+  Parameters
+  ----------
+    name : str
+      Label name
+
+    types : list, default=[]
+      All the label types
+
+    queries_count : int, default=0
+      Number of times the label occurred in a query
+
+    uploads_count : int, default=0
+      Number of times the label occurred in a uploaded document
+
+    mentions : pandas.DataFrame, default=pandas.DataFrame(columns=['DOCNAME','TYPE','SCORE']))
+      Table to store the important mentions of the label in the uploaded
+      documents, together with their type and their score
+  '''
 
   def __init__ (self,
                 name,
                 types         = [],
                 queries_count = 0,
                 uploads_count = 0,
-                mentions      = pd.DataFrame(columns=['FILENAME','TYPE','SCORE'])):
+                mentions      = pd.DataFrame(columns=['DOCNAME','TYPE','SCORE'])):
 
     self.name = name
     self.types = types
@@ -19,6 +40,19 @@ class Label ():
 
 
   def update (self, labinfo):
+    '''
+    Update the label using the new information contained in labsinfo
+
+
+    Parameters
+    ----------
+    labinfo : dict
+      New label information
+
+    Returns
+    -------
+    None
+    '''
 
     self.queries_count += labinfo['queries_count']
     self.uploads_count += labinfo['uploads_count']
@@ -30,6 +64,14 @@ class Label ():
 
 
   def show (self):
+    '''
+    Print the label to terminal
+
+
+    Returns
+    -------
+    None
+    '''
 
     parameters = list(self.__init__.__code__.co_varnames)
     parameters.remove('self')
@@ -42,6 +84,6 @@ if __name__== '__main__':
 
   from rboost.source.network import Network
 
-  with Network(path='./../database/pickles/', name='network.pkl') as net:
+  with Network() as net:
     label = net.graph.nodes['quantum']['label']
     label.show()

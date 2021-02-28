@@ -9,29 +9,57 @@ from rboost.cli.rboost import RBoost
 
 
 class PDF (Document):
+  '''
+  Class for the PDF document object
 
 
-  def __init__ (self, name, path=RBoost._pdfs_path,
-                filetype='standard', reference=None):
+  Parameters
+  ----------
+    name : str
+      PDF name
+
+    path : str, default='./rboost/rboost/database/pdfs/'
+      PDF local path
+
+    doctype : str, default='standard'
+      PDF type
+  '''
+
+
+  def __init__ (self, name, path=RBoost._pdfs_path, doctype='standard'):
 
     Document.__init__(self, name=name, path=path,
-                      filetype=filetype, reference=reference)
+                      doctype=doctype, reference=None)
 
 
   @property
-  def filename (self):
+  def docname (self):
+    '''
+    Full PDF name (str)
+    '''
 
-    return self.name
+    docname = self.name
+
+    return docname
 
 
   def get_text (self):
+    '''
+    Get the pre-processed text extracted from the PDF document
+
+
+    Returns
+    -------
+    text : str
+      Extracted text (None if the extraction fails)
+    '''
 
     try:
       encoded_bytes = textract.process(self.path + self.name)
 
     except UnicodeDecodeError:
       colorama.init()
-      message = f'WARNING: The file "{self.name}" cannot be read'
+      message = f'WARNING: The pdf file "{self.name}" cannot be read'
       print('>>> \033[93m' + message + '\033[0m')
       return None
 
