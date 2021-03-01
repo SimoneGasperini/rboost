@@ -1,4 +1,4 @@
-Source Docs
+Source Code
 ===========
 
 WORK IN PROGRESS
@@ -6,11 +6,7 @@ WORK IN PROGRESS
 .. toctree::
    :maxdepth: 4
 
-   document
-   pdf
-   notebook
-   figure
-   remark
-   label
+   documents/documents
    database
+   label
    network

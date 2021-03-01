@@ -10,7 +10,7 @@ class Database ():
 
   Parameters
   ----------
-    path : str, default='rboost/database/pickles/database.pkl'
+    path : str, default='<database_path>'
       Local path to the database pickle file
 
     df : pandas.DataFrame, default=None

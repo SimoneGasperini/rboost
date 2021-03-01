@@ -9,5 +9,5 @@ WORK IN PROGRESS
 
    introduction
    overview
-   commands
-   sourcecode
+   clicommands/clicommands
+   sourcecode/sourcecode

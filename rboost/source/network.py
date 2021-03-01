@@ -15,16 +15,16 @@ class Network ():
 
   Parameters
   ----------
-    path : str, default='rboost/database/pickles/network.pkl'
+    path : str, default='<network_path>'
       Local path to the network pickle file
 
     graph : networkx.Graph, default=None
       Graph which represents the RBoost's labels network
   '''
 
-  def __init__ (self, pathname=RBoost._network_pkl, graph=None):
+  def __init__ (self, path=RBoost._network_pkl, graph=None):
 
-    self.pathname = pathname
+    self.path = path
     self.graph = graph
 
 
@@ -38,7 +38,7 @@ class Network ():
     self
     '''
 
-    self.graph = nx.read_gpickle(self.pathname)
+    self.graph = nx.read_gpickle(self.path)
 
     return self
 
@@ -53,7 +53,7 @@ class Network ():
     None
     '''
 
-    nx.write_gpickle(self.graph, self.pathname)
+    nx.write_gpickle(self.graph, self.path)
 
 
   def update_nodes (self, labs):

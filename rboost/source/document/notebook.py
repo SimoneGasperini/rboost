@@ -20,7 +20,7 @@ class Notebook (Document):
     name : str
       Notebook name
 
-    path : str, default='rboost/database/notebooks/.../'
+    path : str
       Notebook local path
   '''
 

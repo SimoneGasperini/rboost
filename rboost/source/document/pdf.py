@@ -18,7 +18,7 @@ class PDF (Document):
     name : str
       PDF name
 
-    path : str, default='rboost/database/pdfs/'
+    path : str, default='<pdfs_path>'
       PDF local path
 
     doctype : str, default='standard'
