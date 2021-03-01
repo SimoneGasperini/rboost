@@ -15,7 +15,7 @@ class Network ():
 
   Parameters
   ----------
-    path : str, default='./rboost/rboost/database/pickles/network.pkl'
+    path : str, default='rboost/database/pickles/network.pkl'
       Local path to the network pickle file
 
     graph : networkx.Graph, default=None

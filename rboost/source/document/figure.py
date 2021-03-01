@@ -2,7 +2,6 @@ import os
 from itertools import combinations
 
 import pandas as pd
-import webbrowser
 
 from rboost.source.document.base import Document
 
