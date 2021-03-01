@@ -6,7 +6,7 @@ import pandas as pd
 from rboost.source.document.base import Document
 
 
-class Figure (Document):
+class Figure ():
   '''
   Class for the Figure object
 
@@ -28,10 +28,11 @@ class Figure (Document):
 
   def __init__ (self, name, path, caption=None, reference=None):
 
+    self.name = name
+    self.path = path
+    self.doctype = 'figure'
     self.caption = caption
-
-    Document.__init__(self, name=name, path=path,
-                      doctype='figure', reference=reference)
+    self.reference = reference
 
 
   @property

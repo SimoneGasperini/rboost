@@ -18,15 +18,14 @@ class PDF (Document):
     name : str
       PDF name
 
-    path : str, default='<pdfs_path>'
-      PDF local path
-
     doctype : str, default='standard'
       PDF type
   '''
 
 
-  def __init__ (self, name, path=RBoost._pdfs_path, doctype='standard'):
+  def __init__ (self, name, doctype='standard'):
+
+    path=RBoost._pdfs_path
 
     Document.__init__(self, name=name, path=path,
                       doctype=doctype, reference=None)
@@ -67,3 +66,23 @@ class PDF (Document):
     text = strip_non_alphanum(strip_punctuation(raw_text.lower()))
 
     return text
+
+
+  def open_editor (self):
+    '''
+    Raises
+    ------
+    NotImplementedError
+    '''
+
+    raise NotImplementedError
+
+
+  def get_data_from_figures (self, figures):
+    '''
+    Raises
+    ------
+    NotImplementedError
+    '''
+
+    raise NotImplementedError

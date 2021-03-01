@@ -81,10 +81,6 @@ class Document ():
     ------
     SystemError
       If the system platform is not supported
-
-    Returns
-    -------
-    None
     '''
 
     file = self.path + self.name

@@ -153,11 +153,6 @@ class Notebook (Document):
     '''
     Check if the Notebook directory contains all the figures files referenced
     in the Notebook document
-
-
-    Returns
-    -------
-    None
     '''
 
     missing = [fig.name for fig in self.get_figures()

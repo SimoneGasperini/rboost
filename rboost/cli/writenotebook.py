@@ -64,7 +64,7 @@ class WriteNotebook (RBoost):
 
     with Database() as db:
 
-      if notebook.docname in list(db.df['DOCNAME']):
+      if notebook.docname in list(db.dataframe['DOCNAME']):
         colorama.init()
         message = f'FAIL: The file "{notebook.docname}" already exists in RBoost database'
         print('>>> \033[91m' + message + '\033[0m')
@@ -90,8 +90,8 @@ class WriteNotebook (RBoost):
       date = notebook.name[:10]
       data = [[date, fig.docname, fig.doctype, fig.reference] for fig in figures]
       data.append([date, notebook.docname, notebook.doctype, notebook.reference])
-      new_df = pd.DataFrame(data=data, columns=db.df.columns)
-      db.df = db.df.append(new_df, ignore_index=True)
+      new_df = pd.DataFrame(data=data, columns=db.dataframe.columns)
+      db.dataframe = db.dataframe.append(new_df, ignore_index=True)
 
     with Network() as net:
 

@@ -63,3 +63,13 @@ class Remark (Document):
     text = strip_non_alphanum(strip_punctuation(raw_text.lower()))
 
     return text
+
+
+  def get_data_from_figures (self, figures):
+    '''
+    Raises
+    ------
+    NotImplementedError
+    '''
+
+    raise NotImplementedError

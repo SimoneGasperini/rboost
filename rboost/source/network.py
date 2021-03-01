@@ -15,16 +15,13 @@ class Network ():
 
   Parameters
   ----------
-    path : str, default='<network_path>'
-      Local path to the network pickle file
-
     graph : networkx.Graph, default=None
       Graph which represents the RBoost's labels network
   '''
 
-  def __init__ (self, path=RBoost._network_pkl, graph=None):
+  def __init__ (self, graph=None):
 
-    self.path = path
+    self.path = RBoost._network_pkl
     self.graph = graph
 
 
@@ -46,11 +43,6 @@ class Network ():
   def __exit__ (self, exc_type, exc_value, exc_traceback):
     '''
     Exit the context manager writing the graph into the pickle file
-
-
-    Returns
-    -------
-    None
     '''
 
     nx.write_gpickle(self.graph, self.path)
@@ -66,10 +58,6 @@ class Network ():
     ----------
     labs : list of dict
       Labels data
-
-    Returns
-    -------
-    None
     '''
 
     new_nodes = [dic['name'] for dic in labs
@@ -93,10 +81,6 @@ class Network ():
     ----------
     links : list of tuple
       Links between labels
-
-    Returns
-    -------
-    None
     '''
 
     new_edges = [link for link in links
@@ -115,11 +99,6 @@ class Network ():
   def clear (self):
     '''
     Clear the network by removing all the graph nodes and edges
-
-
-    Returns
-    -------
-    None
     '''
 
     self.graph.clear()
@@ -134,8 +113,8 @@ class Network ():
 
     Returns
     -------
-    node_size : array-like (1D) of float
-      Nodes sizes
+    node_size : array-like (1D)
+      Array of floats representing the nodes sizes
 
     Notes
     -----
@@ -159,8 +138,8 @@ class Network ():
 
     Returns
     -------
-    node_color : array-like (1D) of float
-      Numbers representing the nodes colors
+    node_color : array-like (1D)
+      Array of floats representing the nodes colors
 
     Notes
     -----
@@ -184,10 +163,6 @@ class Network ():
     ----------
     cmap : str, default='rainbow'
       Nodes color map
-
-    Returns
-    -------
-    None
     '''
 
     fig, ax = plt.subplots(figsize=(10,8))

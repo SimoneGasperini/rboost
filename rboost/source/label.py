@@ -48,10 +48,6 @@ class Label ():
     ----------
     labinfo : dict
       New label information
-
-    Returns
-    -------
-    None
     '''
 
     self.queries_count += labinfo['queries_count']
@@ -66,11 +62,6 @@ class Label ():
   def show (self):
     '''
     Print the label to terminal
-
-
-    Returns
-    -------
-    None
     '''
 
     parameters = list(self.__init__.__code__.co_varnames)

@@ -31,7 +31,7 @@ class UploadPdfs (RBoost):
     with Database() as db:
 
       docnames = [name for name in os.listdir(RBoost._pdfs_path)
-                   if name not in list(db.df['DOCNAME'])]
+                   if name not in list(db.dataframe['DOCNAME'])]
 
     pdfs = [PDF(name=name) for name in docnames]
 
@@ -65,5 +65,5 @@ class UploadPdfs (RBoost):
       data = [[RBoost._date, pdf.docname, pdf.doctype, pdf.reference] for pdf in pdfs
               if pdf.name not in UploadPdfs._failed]
 
-      new_df = pd.DataFrame(data=data, columns=db.df.columns)
-      db.df = db.df.append(new_df, ignore_index=True)
+      new_df = pd.DataFrame(data=data, columns=db.dataframe.columns)
+      db.dataframe = db.dataframe.append(new_df, ignore_index=True)

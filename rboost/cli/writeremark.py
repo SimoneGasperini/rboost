@@ -65,7 +65,7 @@ class WriteRemark (RBoost):
 
     with Database() as db:
 
-      if remark.docname in list(db.df['DOCNAME']):
+      if remark.docname in list(db.dataframe['DOCNAME']):
         raise NotImplementedError('Not implemented yet')
 
     if remark.name not in os.listdir(remark.path):
@@ -84,8 +84,8 @@ class WriteRemark (RBoost):
     with Database() as db:
 
       data = [[RBoost._date, remark.name, remark.doctype, remark.reference]]
-      new_df = pd.DataFrame(data=data, columns=db.df.columns)
-      db.df = db.df.append(new_df, ignore_index=True)
+      new_df = pd.DataFrame(data=data, columns=db.dataframe.columns)
+      db.dataframe = db.dataframe.append(new_df, ignore_index=True)
 
     with Network() as net:
 

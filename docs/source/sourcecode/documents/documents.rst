@@ -9,5 +9,5 @@ WORK IN PROGRESS
    base
    pdf
    notebook
-   figure
    remark
+   figure

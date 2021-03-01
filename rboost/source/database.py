@@ -10,17 +10,14 @@ class Database ():
 
   Parameters
   ----------
-    path : str, default='<database_path>'
-      Local path to the database pickle file
-
-    df : pandas.DataFrame, default=None
+    dataframe : pandas.DataFrame, default=None
       Table which represents the RBoost's documents database
   '''
 
-  def __init__ (self, path=RBoost._database_pkl, df=None):
+  def __init__ (self, dataframe=None):
 
-    self.path = path
-    self.df = df
+    self.path = RBoost._database_pkl
+    self.dataframe = dataframe
 
 
   def __enter__ (self):
@@ -33,7 +30,7 @@ class Database ():
     self
     '''
 
-    self.df = pd.read_pickle(self.path)
+    self.dataframe = pd.read_pickle(self.path)
 
     return self
 
@@ -41,14 +38,9 @@ class Database ():
   def __exit__ (self, exc_type, exc_value, exc_traceback):
     '''
     Exit the context manager writing the table into the pickle file
-
-
-    Returns
-    -------
-    None
     '''
 
-    self.df.to_pickle(self.path)
+    self.dataframe.to_pickle(self.path)
 
 
   def filter_by (self, column, value):
@@ -71,8 +63,8 @@ class Database ():
       Filtered database
     '''
 
-    df = self.df.loc[self.df[column] == value]
-    database = Database(df=df)
+    dataframe = self.dataframe.loc[self.dataframe[column] == value]
+    database = Database(dataframe=dataframe)
 
     return database
 
@@ -80,14 +72,9 @@ class Database ():
   def clear (self):
     '''
     Clear the database by removing all the table rows
-
-
-    Returns
-    -------
-    None
     '''
 
-    self.df = self.df.iloc[0:0]
+    self.dataframe = self.dataframe.iloc[0:0]
 
 
   def show (self, full=False):
@@ -99,10 +86,6 @@ class Database ():
     ----------
     full : bool, default=False
       If True, display all the rows
-
-    Returns
-    -------
-    None
     '''
 
     pd.set_option('colheader_justify', 'right')
@@ -110,7 +93,7 @@ class Database ():
     if full:
       pd.set_option('display.max_rows', None)
 
-    print(self.df)
+    print(self.dataframe)
 
 
 
