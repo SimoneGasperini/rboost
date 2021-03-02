@@ -48,6 +48,55 @@ class Network ():
     nx.write_gpickle(self.graph, self.path)
 
 
+  def get_labels (self, sort=False):
+    '''
+    Get the list of all the labels whitin the network
+
+
+    Parameters
+    ----------
+    sort : bool, default=False
+      If True, sort the labels by importance
+
+    Returns
+    -------
+    labels : list of Label
+      Labels in the network
+    '''
+
+    labels = [self.graph.nodes[node]['label'] for node in self.graph.nodes]
+
+    if sort:
+      labels.sort(reverse=True)
+
+    return labels
+
+
+  def get_kth_neighbors (self, node, k=1):
+    '''
+    Get all the node neighbors up to k-th order
+
+
+    Parameters
+    ----------
+    node : str
+      Source node
+
+    k : int, default=1
+      Maximum neighbors order
+
+    Returns
+    -------
+    neighbors : list of str
+      Neighbors up to k-th order
+    '''
+
+    nbrs = nx.single_source_shortest_path_length(G=self.graph, source=node, cutoff=k)
+    neighbors = list(nbrs.keys())
+
+    return neighbors
+
+
   def update_nodes (self, labs):
     '''
     Add new nodes to the graph or update already existing graph nodes
@@ -104,84 +153,94 @@ class Network ():
     self.graph.clear()
 
 
-  def compute_node_size (self):
+  def compute_node_size (self, nodelist):
     '''
-    Compute the normalized sizes of the graph nodes according to their
-    importance whitin the network (directly proportional to uses number of the
-    label)
+    Compute the normalized sizes of the nodes in nodelist according to their
+    importance (proportional to the number of queries and uploads of the
+    corresponding labels)
 
+
+    Parameters
+    ----------
+    nodelist : list of str
+      Selected nodes
 
     Returns
     -------
     node_size : array-like (1D)
       Array of floats representing the nodes sizes
-
-    Notes
-    -----
-    .. note::
-      This has only visualization purposes
     '''
 
     node_size = np.array([self.graph.nodes[n]['label'].queries_count +
                           self.graph.nodes[n]['label'].uploads_count
-                          for n in self.graph.nodes])
-    node_size = ((1. / np.sum(node_size)) * node_size) * 4e4
+                          for n in nodelist])
+    node_size = ((1. / np.sum(node_size)) * node_size) * 3e4
 
     return node_size
 
 
-  def compute_node_color (self):
+  def compute_node_color (self, nodelist):
     '''
     Compute the normalized colors (as floating point numbers in [0,1])
-    of the graph nodes according to their degree (links number of the label)
+    of the nodes in nodelist according to their degree whitin the network
 
+
+    Parameters
+    ----------
+    nodelist : list of str
+      Selected nodes
 
     Returns
     -------
     node_color : array-like (1D)
       Array of floats representing the nodes colors
-
-    Notes
-    -----
-    .. note::
-      This has only visualization purposes
     '''
 
     node_color = np.array([self.graph.degree[n]
-                           for n in self.graph.nodes])
+                           for n in nodelist])
     node_color = (1. / np.sum(node_color)) * node_color
 
     return node_color
 
 
-  def show (self, cmap='rainbow'):
+  def show (self, nodelist=None, cmap='rainbow'):
     '''
-    Show a graphical representation of the labels network
+    Show a graphical representation of the network
 
 
     Parameters
     ----------
+    nodelist : list, default=graph.nodes()
+      Selected nodes
+
     cmap : str, default='rainbow'
       Nodes color map
     '''
 
+    if nodelist is None:
+      nodelist = self.graph.nodes()
+
     fig, ax = plt.subplots(figsize=(10,8))
 
-    pos = nx.drawing.layout.kamada_kawai_layout(self.graph)
-    node_size = self.compute_node_size()
-    node_color = self.compute_node_color()
+    graph = self.graph.subgraph(nodes=nodelist)
+    pos = nx.drawing.layout.kamada_kawai_layout(graph)
+    node_size = self.compute_node_size(nodelist)
+    node_color = self.compute_node_color(nodelist)
     bbox = {'boxstyle':'round', 'ec':'black', 'fc':'white', 'alpha':0.4}
 
-    nx.draw_networkx(G           = self.graph,
-                     pos         = pos,
-                     ax          = ax,
-                     node_size   = node_size,
-                     node_color  = node_color,
-                     width       = 0.2,
-                     cmap        = cmap,
-                     bbox        = bbox,
-                     font_size   = 10,
-                     font_weight = 'bold')
+    params = {'G'           : graph,
+              'pos'         : pos,
+              'ax'          : ax,
+              'nodelist'    : nodelist,
+              'node_size'   : node_size,
+              'node_color'  : node_color,
+              'width'       : 0.2,
+              'cmap'        : cmap,
+              'bbox'        : bbox,
+              'font_size'   : 10,
+              }
+
+    nx.draw_networkx(**params)
 
     fig.tight_layout()
     plt.axis('off')

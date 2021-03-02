@@ -39,6 +39,29 @@ class Label ():
     self.mentions = mentions
 
 
+  def __lt__ (self, other):
+    '''
+    Compare the importance of two labels
+
+
+    Parameters
+    ----------
+    other : Label
+      The second label
+
+    Returns
+    -------
+    less_than : bool
+      Result
+    '''
+
+    count1 = self.queries_count + self.uploads_count
+    count2 = other.queries_count + other.uploads_count
+    less_than = count1 < count2
+
+    return less_than
+
+
   def update (self, labinfo):
     '''
     Update the label using the new information contained in labsinfo

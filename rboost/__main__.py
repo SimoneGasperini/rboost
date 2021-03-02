@@ -7,6 +7,9 @@ from rboost.cli.writeremark import WriteRemark
 from rboost.cli.listdocuments import ListDocuments
 from rboost.cli.listlabels import ListLabels
 
+from rboost.cli.shownetwork import ShowNetwork
+from rboost.cli.showlabel import ShowLabel
+
 
 
 if __name__ == '__main__':

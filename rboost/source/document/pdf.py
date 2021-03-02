@@ -63,7 +63,7 @@ class PDF (Document):
       return None
 
     raw_text = encoded_bytes.decode('utf-8')
-    text = strip_non_alphanum(strip_punctuation(raw_text.lower()))
+    text = strip_non_alphanum(strip_punctuation(raw_text.lower())).replace('ﬁ','fi')
 
     return text
 
