@@ -1,5 +1,14 @@
-import textract
+from io import StringIO
+
+from tqdm import tqdm
 import colorama
+
+from pdfminer.converter import TextConverter
+from pdfminer.layout import LAParams
+from pdfminer.pdfdocument import PDFDocument
+from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+from pdfminer.pdfpage import PDFPage
+from pdfminer.pdfparser import PDFParser
 
 from gensim.parsing.preprocessing import strip_punctuation
 from gensim.parsing.preprocessing import strip_non_alphanum
@@ -53,17 +62,27 @@ class PDF (Document):
       Extracted text (None if the extraction fails)
     '''
 
-    try:
-      encoded_bytes = textract.process(self.path + self.name)
+    output_string = StringIO()
 
-    except UnicodeDecodeError:
+    try:
+      with open(self.path + self.name, 'rb') as file:
+        document = PDFDocument(PDFParser(file))
+        resource_manager = PDFResourceManager()
+        device = TextConverter(resource_manager,
+                               output_string,
+                               laparams=LAParams())
+        interpreter = PDFPageInterpreter(resource_manager, device)
+        for page in tqdm(list(PDFPage.create_pages(document))):
+          interpreter.process_page(page)
+
+    except Exception:
       colorama.init()
       message = f'WARNING: The pdf file "{self.name}" cannot be read'
       print('>>> \033[93m' + message + '\033[0m')
       return None
 
-    raw_text = encoded_bytes.decode('utf-8')
-    text = strip_non_alphanum(strip_punctuation(raw_text.lower())).replace('ﬁ','fi')
+    text = output_string.getvalue()
+    text = strip_non_alphanum(strip_punctuation(text.lower()))
 
     return text
 
