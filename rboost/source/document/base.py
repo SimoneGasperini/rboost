@@ -1,6 +1,5 @@
 import os
 import sys
-from stat import S_IREAD, S_IRGRP, S_IROTH, S_IWUSR
 from itertools import combinations
 
 import pandas as pd
@@ -84,15 +83,12 @@ class Document ():
     '''
 
     file = self.path + self.name
-    os.chmod(file, S_IWUSR|S_IREAD)
 
     if sys.platform.startswith('win'):
       os.system('notepad ' + file)
-      os.chmod(file, S_IREAD|S_IRGRP|S_IROTH)
 
     elif sys.platform.startswith('linux'):
       os.system('gedit ' + file)
-      os.chmod(file, S_IREAD|S_IRGRP|S_IROTH)
 
     else:
       raise SystemError('System platform not supported')

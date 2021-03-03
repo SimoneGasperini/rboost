@@ -1,14 +1,16 @@
 from rboost.cli.rboost import RBoost
 
-from rboost.cli.uploadpdfs import UploadPdfs
-from rboost.cli.writenotebook import WriteNotebook
-from rboost.cli.writeremark import WriteRemark
+from rboost.cli.welcome import Welcome
 
-from rboost.cli.listdocuments import ListDocuments
-from rboost.cli.listlabels import ListLabels
+from rboost.cli.uploading.uploadpdfs import UploadPdfs
+from rboost.cli.uploading.writenotebook import WriteNotebook
+from rboost.cli.uploading.writeremark import WriteRemark
 
-from rboost.cli.shownetwork import ShowNetwork
-from rboost.cli.showlabel import ShowLabel
+from rboost.cli.listing.listdocuments import ListDocuments
+from rboost.cli.listing.listlabels import ListLabels
+
+from rboost.cli.visualizing.shownetwork import ShowNetwork
+from rboost.cli.visualizing.showlabel import ShowLabel
 
 
 

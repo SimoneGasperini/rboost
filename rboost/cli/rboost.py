@@ -2,7 +2,9 @@ import os
 import datetime
 
 from plumbum import cli
+
 from rboost.cli.__path import PATH
+from rboost.drive.gdrive import GDrive
 
 
 
@@ -21,6 +23,7 @@ class RBoost (cli.Application):
   _database_pkl = _pickles_path + 'database.pkl'
   _network_pkl  = _pickles_path + 'network.pkl'
 
+  gdrive = GDrive(path=PATH)
 
   _remark_types = ['standard',
                    'problem',

@@ -13,22 +13,21 @@ class ShowLabel (RBoost):
   Show label whitin the RBoost network
   '''
 
-  _neighbors_order = 1
+  _order = 1
 
 
-  @cli.switch ('--neighbors_order', int)
+  @cli.switch ('--order', int)
   def neighbors_order (self, order):
     '''
     Specify the maximum neighbors order of the label
     '''
 
-    self._neighbors_order = order
+    self._order = order
 
 
   def main (self, label):
 
-    order = self._neighbors_order
-    self.show_label(name=label, order=order)
+    self.show_label(name=label, order=self._order)
 
 
   @staticmethod
@@ -42,7 +41,7 @@ class ShowLabel (RBoost):
       except:
         colorama.init()
         message = f'FAIL: Label "{name}" not found in RBoost network'
-        print('>>> \033[91m' + message + '\033[0m' )
+        print('>>> \033[91m' + message + '\033[0m')
         sys.exit()
 
       net.show(nodelist=nodelist)
