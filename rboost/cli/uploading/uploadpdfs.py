@@ -14,15 +14,11 @@ class UploadPdfs (RBoost):
   Upload the pdf documents on RBoost database
   '''
 
-  _failed = []
-
 
   def main (self):
 
     pdfs = self.get_pdfs()
-
-    self.update_network(pdfs)
-    self.update_database(pdfs)
+    self.uploading(pdfs)
 
 
   @staticmethod
@@ -39,7 +35,9 @@ class UploadPdfs (RBoost):
 
 
   @staticmethod
-  def update_network (pdfs):
+  def uploading (pdfs):
+
+    docs_data = []
 
     with Network() as net:
 
@@ -47,23 +45,16 @@ class UploadPdfs (RBoost):
 
         print(f'>>> Uploading "{pdf.name}"')
         text = pdf.get_text()
+        if text is None: continue
 
-        if text is None:
-          UploadPdfs._failed.append(pdf.name)
-          continue
+        RBoost.gdrive.upload_file(pdf.path + pdf.name, foldername='pdfs')
+        docs_data.append([pdf.docname, pdf.doctype, pdf.reference])
 
         new_labs, new_links = pdf.get_data_from_text(text)
         net.update_nodes(new_labs)
         net.update_edges(new_links)
 
-
-  @staticmethod
-  def update_database (pdfs):
-
     with Database() as db:
 
-      data = [[RBoost._date, pdf.docname, pdf.doctype, pdf.reference] for pdf in pdfs
-              if pdf.name not in UploadPdfs._failed]
-
-      new_df = pd.DataFrame(data=data, columns=db.dataframe.columns)
+      new_df = pd.DataFrame(data=docs_data, columns=db.dataframe.columns)
       db.dataframe = db.dataframe.append(new_df, ignore_index=True)

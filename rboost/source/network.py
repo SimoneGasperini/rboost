@@ -1,3 +1,4 @@
+import os
 from collections import Counter
 
 import networkx as nx
@@ -21,13 +22,15 @@ class Network ():
 
   def __init__ (self, graph=None):
 
-    self.path = RBoost._network_pkl
+    self.filepath = RBoost._network_pkl
+    self.filename = os.path.basename(self.filepath)
     self.graph = graph
 
 
   def __enter__ (self):
     '''
-    Enter the context manager reading the graph from the pickle file
+    Enter the context manager downloading the Google Drive network pickle file
+    and reading its content
 
 
     Returns
@@ -35,17 +38,21 @@ class Network ():
     self
     '''
 
-    self.graph = nx.read_gpickle(self.path)
+    RBoost.gdrive.download_file(self.filename)
+    self.graph = nx.readwrite.read_gpickle(self.filepath)
 
     return self
 
 
   def __exit__ (self, exc_type, exc_value, exc_traceback):
     '''
-    Exit the context manager writing the graph into the pickle file
+    Exit the context manager uploading the network pickle file to Google Drive
     '''
 
-    nx.write_gpickle(self.graph, self.path)
+    nx.readwrite.write_gpickle(self.graph, self.filepath)
+    RBoost.gdrive.update_file(self.filepath)
+
+    os.remove(self.filepath)
 
 
   def get_labels (self, sort=False):

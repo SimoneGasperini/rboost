@@ -72,7 +72,7 @@ class PDF (Document):
                                output_string,
                                laparams=LAParams())
         interpreter = PDFPageInterpreter(resource_manager, device)
-        for page in tqdm(list(PDFPage.create_pages(document))):
+        for page in tqdm(list(PDFPage.create_pages(document)), ncols=80):
           interpreter.process_page(page)
 
     except Exception:

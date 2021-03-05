@@ -9,11 +9,4 @@ class Welcome (RBoost):
 
   def main (self):
 
-    print('Welcome to RBoost!\n')
-
-    try:
-      self.gdrive.create_folder(name='RBoost')
-      print('Creation completed')
-
-    except :
-      print('Something went wrong')
+    print('Welcome to RBoost!')

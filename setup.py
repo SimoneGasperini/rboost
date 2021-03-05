@@ -1,20 +1,34 @@
 import os
 
+import nltk
+
 from setuptools import setup
 from setuptools import find_packages
 
+
 def set_abspath ():
+
   with open(file='./rboost/cli/__path.py', mode='w') as file:
-    line = 'PATH = ' + '"' + os.getcwd() + '"'
-    file.write(line.replace('\\','/'))
+    line = 'PATH = "' + os.path.dirname(os.getcwd()).replace('\\','/') + '"'
+    file.write(line)
+
+
+def create_dirs ():
+
+  path = os.path.dirname(os.getcwd()).replace('\\','/') + '/RBoost_Data/'
+  dirs = ['My_Documents/pdfs','My_Documents/notebooks','My_Documents/remarks','My_Downloads']
+
+  for d in dirs:
+    os.makedirs(path + d, exist_ok=True)
 
 
 def download_wordnet ():
-  import nltk
+
   nltk.download('wordnet')
 
 
 set_abspath()
+create_dirs()
 download_wordnet()
 
 

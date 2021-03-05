@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 
 from rboost.cli.rboost import RBoost
@@ -16,13 +18,16 @@ class Database ():
 
   def __init__ (self, dataframe=None):
 
-    self.path = RBoost._database_pkl
+    self.filepath = RBoost._database_pkl
+    self.filename = os.path.basename(self.filepath)
+
     self.dataframe = dataframe
 
 
   def __enter__ (self):
     '''
-    Enter the context manager reading the table from the pickle file
+    Enter the context manager downloading the Google Drive database pickle file
+    and reading its content
 
 
     Returns
@@ -30,17 +35,21 @@ class Database ():
     self
     '''
 
-    self.dataframe = pd.read_pickle(self.path)
+    RBoost.gdrive.download_file(self.filename)
+    self.dataframe = pd.read_pickle(self.filepath)
 
     return self
 
 
   def __exit__ (self, exc_type, exc_value, exc_traceback):
     '''
-    Exit the context manager writing the table into the pickle file
+    Exit the context manager uploading the database pickle file to Google Drive
     '''
 
-    self.dataframe.to_pickle(self.path)
+    self.dataframe.to_pickle(self.filepath)
+    RBoost.gdrive.update_file(self.filepath)
+
+    os.remove(self.filepath)
 
 
   def filter_by (self, column, value):
@@ -92,6 +101,7 @@ class Database ():
 
     if full:
       pd.set_option('display.max_rows', None)
+      pd.set_option('display.max_colwidth', None)
 
     print(self.dataframe)
 
