@@ -252,10 +252,3 @@ class Network ():
     fig.tight_layout()
     plt.axis('off')
     plt.show()
-
-
-
-if __name__== '__main__':
-
-  with Network() as net:
-    net.show()

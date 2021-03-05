@@ -104,10 +104,3 @@ class Database ():
       pd.set_option('display.max_colwidth', None)
 
     print(self.dataframe)
-
-
-
-if __name__== '__main__':
-
-  with Database() as db:
-    db.show()

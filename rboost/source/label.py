@@ -91,13 +91,3 @@ class Label ():
     parameters.remove('self')
 
     print('\n\n'.join([key.upper() + ' =\n' + str(getattr(self, key)) for key in parameters]))
-
-
-
-if __name__== '__main__':
-
-  from rboost.source.network import Network
-
-  with Network() as net:
-    label = net.graph.nodes['quantum']['label']
-    label.show()

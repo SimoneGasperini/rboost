@@ -1,5 +1,4 @@
 import os
-import warnings
 
 from plumbum import cli
 
@@ -50,8 +49,6 @@ class RBoost (cli.Application):
 
 
   def main (self):
-
-    warnings.filterwarnings('ignore')
 
     if not self.nested_command:
       os.system('rboost --help')
