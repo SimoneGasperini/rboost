@@ -14,7 +14,6 @@ class ListDocuments (RBoost):
   '''
 
   _type = None
-  _date = None
 
 
   @cli.switch ('--type', str)
@@ -33,23 +32,11 @@ class ListDocuments (RBoost):
     self._type = type
 
 
-  @cli.switch ('--date', str)
-  def date (self, date):
-    '''
-    Selects documents with the specified date
-    '''
-
-    self._date = date
-
-
   def main (self):
 
     with Database() as db:
 
       if self._type is not None:
         db = db.filter_by('DOCTYPE', value=self._type)
-
-      if self._date is not None:
-        db = db.filter_by('DATE', value=self._date)
 
     db.show(full=True)

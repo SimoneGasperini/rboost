@@ -27,7 +27,7 @@ class UploadPdfs (RBoost):
     with Database() as db:
 
       docnames = [name for name in os.listdir(RBoost._pdfs_path)
-                   if name not in list(db.dataframe['DOCNAME'])]
+                   if name not in db.dataframe['DOCNAME'].tolist()]
 
     pdfs = [PDF(name=name) for name in docnames]
 
