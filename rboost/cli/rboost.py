@@ -3,8 +3,7 @@ from datetime import datetime
 
 from plumbum import cli
 
-from rboost.drive.gdrive import GDrive
-from rboost.cli.__path import PATH
+from rboost.source.gdrive import GDrive
 
 
 class RBoost (cli.Application):
@@ -13,21 +12,22 @@ class RBoost (cli.Application):
   PROGNAME = 'rboost'
   VERSION = '0.0.1'
 
+  PATH = os.path.expanduser('~/Desktop/RBoost_Data').replace('\\','/')
 
-  _gdrive_path = PATH + '/rboost/rboost/drive/'
+
+  _pdfs_path = PATH + '/My_Documents/pdfs/'
+  _notebooks_path = PATH + '/My_Documents/notebooks/'
+  _remarks_path = PATH + '/My_Documents/remarks/'
+
+  _database_pkl = PATH + '/My_Downloads/database.pkl'
+  _network_pkl  = PATH + '/My_Downloads/network.pkl'
+  _downloads_path = PATH + '/My_Downloads/'
+
+  _gdrive_path = PATH + '/client_token/'
   _gdrive_folders = ['notebook','pdfs','remarks']
 
-  _pdfs_path = PATH + '/RBoost_Data/My_Documents/pdfs/'
-  _notebooks_path = PATH + '/RBoost_Data/My_Documents/notebooks/'
-  _remarks_path = PATH + '/RBoost_Data/My_Documents/remarks/'
-
-  _database_pkl = PATH + '/RBoost_Data/My_Downloads/database.pkl'
-  _network_pkl  = PATH + '/RBoost_Data/My_Downloads/network.pkl'
-  _downloads_path = PATH + '/RBoost_Data/My_Downloads/'
-
   gdrive = GDrive(_gdrive_path, _gdrive_folders,
-                  _database_pkl, _network_pkl,
-                  _downloads_path)
+                  _database_pkl, _network_pkl, _downloads_path)
 
 
   _remark_types = ['standard',

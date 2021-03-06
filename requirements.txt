@@ -7,11 +7,9 @@ colorama
 nltk
 gensim
 tqdm
-
 plumbum
-sphinx
-sphinx-rtd-theme
-
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
+sphinx
+sphinx-rtd-theme

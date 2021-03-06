@@ -1,42 +1,35 @@
 import os
 
-import nltk
+from shutil import copyfile
 
 from setuptools import setup
 from setuptools import find_packages
 
-
-def set_abspath ():
-
-  with open(file='./rboost/cli/__path.py', mode='w') as file:
-    line = 'PATH = "' + os.path.dirname(os.getcwd()).replace('\\','/') + '"'
-    file.write(line)
+import nltk
 
 
-def create_dirs ():
-
-  path = os.path.dirname(os.getcwd()).replace('\\','/') + '/RBoost_Data/'
-  dirs = ['My_Documents/pdfs','My_Documents/notebooks','My_Documents/remarks','My_Downloads']
-
-  for d in dirs:
-    os.makedirs(path + d, exist_ok=True)
+PATH = os.path.expanduser('~/Desktop/RBoost_Data').replace('\\','/')
+CLIENT = './client.json'
+TOKEN = './token.pkl'
+REQUIREMENTS = './requirements.txt'
 
 
-def download_wordnet ():
-
-  nltk.download('wordnet')
-
-
-set_abspath()
-create_dirs()
-download_wordnet()
+dirs = ['/My_Documents/pdfs','/My_Documents/notebooks','/My_Documents/remarks',
+        '/My_Downloads','/client_token']
+for d in dirs:
+  os.makedirs(PATH + d, exist_ok=True)
 
 
+copyfile(CLIENT, PATH + dirs[-1] + CLIENT[1:])
+copyfile(TOKEN, PATH + dirs[-1] + TOKEN[1:])
 
-def get_requirements ():
-  with open(file='./requirements.txt', mode='r') as file:
-    reqs = file.read().splitlines()
-  return reqs
+
+nltk.download('wordnet')
+
+
+with open(REQUIREMENTS, 'r') as file:
+  requirements = file.read().splitlines()
+
 
 setup (
 
@@ -51,7 +44,7 @@ setup (
 
   packages = find_packages(),
 
-  install_requires = get_requirements(),
+  install_requires = requirements,
 
   entry_points = {
     'console_scripts': [

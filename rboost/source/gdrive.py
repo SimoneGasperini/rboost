@@ -16,11 +16,6 @@ from googleapiclient import discovery
 
 class GDrive ():
 
-  client_secret_file = 'client_secret_file.json'
-  api_name = 'drive'
-  api_version = 'v3'
-  scopes = ['https://www.googleapis.com/auth/drive']
-
   mimetypes = {'folder' : 'application/vnd.google-apps.folder',
                'pkl'    : 'application/octet-stream',
                'json'   : 'application/json',
@@ -38,7 +33,10 @@ class GDrive ():
 
   def __init__ (self, gdrive_path, gdrive_folders, database_pkl, network_pkl, downloads_path):
 
-    self.gdrive_path = gdrive_path
+    self.pickle_file = gdrive_path + 'token.pkl'
+    self.client_secret_file = gdrive_path + 'client.json'
+    self.scopes = ['https://www.googleapis.com/auth/drive']
+
     self.gdrive_folders = gdrive_folders
     self.database_pkl = database_pkl
     self.network_pkl = network_pkl
@@ -50,25 +48,24 @@ class GDrive ():
   def _create_service (self):
 
     cred = None
-    pickle_file = self.gdrive_path + f'token_{self.api_name}_{self.api_version}.pkl'
 
-    if os.path.exists(pickle_file):
-      with open(pickle_file, 'rb') as token:
+    if os.path.exists(self.pickle_file):
+      with open(self.pickle_file, 'rb') as token:
         cred = pickle.load(token)
 
     if not cred or not cred.valid:
       if cred and cred.expired and cred.refresh_token:
         cred.refresh(Request())
       else:
-        flow = InstalledAppFlow.from_client_secrets_file(self.gdrive_path + self.client_secret_file,
+        flow = InstalledAppFlow.from_client_secrets_file(self.client_secret_file,
                                                          self.scopes)
         cred = flow.run_local_server()
 
-      with open(pickle_file, 'wb') as token:
+      with open(self.pickle_file, 'wb') as token:
         pickle.dump(cred, token)
 
     try:
-      service = discovery.build(self.api_name, self.api_version, credentials=cred)
+      service = discovery.build('drive', 'v3', credentials=cred)
       return service
 
     except:
