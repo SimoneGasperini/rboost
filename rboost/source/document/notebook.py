@@ -8,6 +8,7 @@ from gensim.parsing.preprocessing import strip_non_alphanum
 
 from rboost.source.document.base import Document
 from rboost.source.document.figure import Figure
+from rboost.cli.rboost import RBoost
 
 
 class Notebook (Document):
@@ -17,17 +18,24 @@ class Notebook (Document):
 
   Parameters
   ----------
-    name : str
-      Notebook name
+    dirname : str
+      Notebook directory name
 
-    path : str
-      Notebook local path
+    date : str
+      Notebook date (dd-mm-yyyy)
+
+    author : str
+      Notebook author (name-surname)
   '''
 
-  def __init__ (self, name, path):
+  def __init__ (self, dirname, date, author):
 
-    Document.__init__(self, name=name, path=path,
-                      doctype='notebook', reference=None)
+    path = RBoost._notebooks_path + dirname + '/'
+    name = date + '_' + author + '.txt'
+    doctype = 'notebook'
+    reference = None
+
+    Document.__init__(self, date, author, path, name, doctype, reference)
 
 
   @property
@@ -108,7 +116,8 @@ class Notebook (Document):
     fignames = [line[1:].strip() for line in figlines if line.startswith('-')]
     captions = self.get_fig_captions(figlines)
 
-    figures = [Figure(path=self.path, name=name, caption=cap, reference=self.docname)
+    figures = [Figure(date=self.date, author=self.author, path=self.path,
+                      name=name, caption=cap, reference=self.docname)
                for name, cap in zip(fignames, captions)]
 
     return figures

@@ -1,6 +1,7 @@
 import os
 import sys
 from itertools import combinations
+from stat import S_IREAD, S_IWUSR
 
 import pandas as pd
 
@@ -12,16 +13,22 @@ from rboost.cli.rboost import RBoost
 
 class Document ():
   '''
-  Base class for the document object
+  Abstract base class for the document object
 
 
   Parameters
   ----------
-    name : str
-      Document name
+    date : str
+      Document date (dd-mm-yyyy)
+
+    author : str
+      Document author (name-surname)
 
     path : str
       Document local path
+
+    name : str
+      Document name
 
     doctype : str
       Document type
@@ -30,11 +37,12 @@ class Document ():
       Name of another Document which the Document refers to
   '''
 
+  def __init__ (self, date, author, path, name, doctype, reference):
 
-  def __init__ (self, name, path, doctype, reference):
-
-    self.name = name
+    self.date = date
+    self.author = author
     self.path = path
+    self.name = name
     self.doctype = doctype
     self.reference = reference
 
@@ -83,12 +91,15 @@ class Document ():
     '''
 
     file = self.path + self.name
+    os.chmod(file, S_IWUSR|S_IREAD)
 
     if sys.platform.startswith('win'):
       os.system('notepad ' + file)
+      os.chmod(file, S_IREAD)
 
     elif sys.platform.startswith('linux'):
       os.system('gedit ' + file)
+      os.chmod(file, S_IREAD)
 
     else:
       raise SystemError('System platform not supported')

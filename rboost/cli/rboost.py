@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from plumbum import cli
 
@@ -45,6 +46,8 @@ class RBoost (cli.Application):
                      'notebook' : 0.1,
                      'caption'  : 0.6,
                      'remark'   : 0.6}
+
+  _date = datetime.today().strftime('%d-%m-%Y')
 
 
 

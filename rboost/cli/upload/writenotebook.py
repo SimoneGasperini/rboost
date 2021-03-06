@@ -1,6 +1,6 @@
 import os
 import sys
-from stat import S_IREAD, S_IRGRP, S_IROTH, S_IWUSR
+from stat import S_IREAD, S_IWUSR
 
 import colorama
 import pandas as pd
@@ -18,15 +18,16 @@ class WriteNotebook (RBoost):
   '''
 
 
-  def main (self, dirname):
+  def main (self):
 
-    dirpath = self._notebooks_path + dirname + '/'
+    dirname = input('>>> Notebook name : ')
+    self.create_dir(dirname)
 
-    self.check_dir(dirpath)
-    os.makedirs(dirpath, exist_ok=True)
+    date = input('>>> Date (dd-mm-yyyy) : ')
+    author = input('>>> Author (name-surname) : ')
 
-    notebook = Notebook(path=dirpath, name=self.get_name())
-    self.check_file(notebook)
+    notebook = Notebook(dirname=dirname, date=date, author=author)
+    self.create_file(notebook)
 
     notebook.open_editor()
     notebook.check_figs()
@@ -36,9 +37,9 @@ class WriteNotebook (RBoost):
 
 
   @staticmethod
-  def check_dir (dirpath):
+  def create_dir (dirname):
 
-    dirname = os.path.basename(dirpath[:-1])
+    dirpath = RBoost._notebooks_path + dirname
 
     if os.path.exists(dirpath):
       print(f'>>> The notebook "{dirname}" already exists, do you want to add a page?')
@@ -48,23 +49,15 @@ class WriteNotebook (RBoost):
       print(f'>>> The notebook "{dirname}" does not exist yet, do you want to create it?')
       if not input('>>> (y/n) ') == 'y': sys.exit()
 
-
-  @staticmethod
-  def get_name ():
-
-    date = input('>>> Date (dd-mm-yyyy) : ')
-    author = input('>>> Author (name-surname) : ')
-    name = date + '_' + author + '.txt'
-
-    return name
+    os.makedirs(dirpath, exist_ok=True)
 
 
   @staticmethod
-  def check_file (notebook):
+  def create_file (notebook):
 
     with Database() as db:
 
-      if notebook.docname in list(db.dataframe['DOCNAME']):
+      if notebook.docname in db.dataframe['DOCNAME'].tolist():
         colorama.init()
         message = f'FAIL: The file "{notebook.docname}" already exists in RBoost database'
         print('>>> \033[91m' + message + '\033[0m')
@@ -87,9 +80,9 @@ class WriteNotebook (RBoost):
 
     with Database() as db:
 
-      date = notebook.name[:10]
-      data = [[date, fig.docname, fig.doctype, fig.reference] for fig in figures]
-      data.append([date, notebook.docname, notebook.doctype, notebook.reference])
+      data = [[fig.date, fig.author, fig.docname, fig.doctype, fig.reference]
+              for fig in figures]
+      data.append([notebook.date, notebook.author, notebook.docname, notebook.doctype, notebook.reference])
       new_df = pd.DataFrame(data=data, columns=db.dataframe.columns)
       db.dataframe = db.dataframe.append(new_df, ignore_index=True)
 
@@ -117,4 +110,4 @@ class WriteNotebook (RBoost):
     with open(dirpath + docname, mode='a') as doc:
       doc.write(title + text + separator)
 
-    os.chmod(dirpath + docname, S_IREAD|S_IRGRP|S_IROTH)
+    os.chmod(dirpath + docname, S_IREAD)

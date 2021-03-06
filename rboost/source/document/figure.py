@@ -13,11 +13,17 @@ class Figure ():
 
   Parameters
   ----------
-    name : str
-      Figure name
+    date : str
+      Figure date (dd-mm-yyyy)
+
+    author : str
+      Figure author (name-surname)
 
     path : str
       Figure local path
+
+    name : str
+      Figure name
 
     caption : str, default=None
       Figure caption
@@ -26,13 +32,16 @@ class Figure ():
       Name of another Document where a reference to the Figure is contained
   '''
 
-  def __init__ (self, name, path, caption=None, reference=None):
+  def __init__ (self, date, author, path, name, caption=None, reference=None):
 
-    self.name = name
+    self.date = date
+    self.author = author
     self.path = path
-    self.doctype = 'figure'
+    self.name = name
     self.caption = caption
     self.reference = reference
+
+    self.doctype = 'figure'
 
 
   @property

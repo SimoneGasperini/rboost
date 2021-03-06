@@ -94,7 +94,8 @@ class GDrive ():
     for foldername in self.gdrive_folders:
       self.create_folder(foldername)
 
-    pd.DataFrame(columns=['DOCNAME','DOCTYPE','REFERENCE']).to_pickle(self.database_pkl)
+    df = pd.DataFrame(columns=['DATE','AUTHOR','DOCNAME','DOCTYPE','REFERENCE'])
+    df.to_pickle(self.database_pkl)
     self.upload_file(self.database_pkl)
     os.remove(self.database_pkl)
 

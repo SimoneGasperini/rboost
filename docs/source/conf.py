@@ -21,9 +21,10 @@ project = 'RBoost'
 copyright = '2021, Simone Gasperini, Enrico Tartari'
 author = 'Simone Gasperini, Enrico Tartari'
 
+master_doc = 'index'
+
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -32,8 +33,7 @@ release = '0.0.1'
 # ones.
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.napoleon',
-              'sphinx.ext.viewcode',
-              'sphinx.ext.intersphinx',
+              'sphinx.ext.viewcode'
 ]
 
 # Add any paths that contain templates here, relative to this directory.

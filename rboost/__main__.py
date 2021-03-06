@@ -13,6 +13,7 @@ from rboost.cli.list.listlabels import ListLabels
 
 from rboost.cli.visualize.shownetwork import ShowNetwork
 from rboost.cli.visualize.showlabel import ShowLabel
+from rboost.cli.visualize.printlabel import PrintLabel
 
 
 

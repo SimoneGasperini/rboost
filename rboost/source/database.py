@@ -101,6 +101,5 @@ class Database ():
 
     if full:
       pd.set_option('display.max_rows', None)
-      pd.set_option('display.max_colwidth', None)
 
     print(self.dataframe)

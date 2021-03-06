@@ -46,30 +46,24 @@ class WriteRemark (RBoost):
     self._type = type
 
 
-  def main (self, name):
+  def main (self):
 
-    dirpath = self._remarks_path + self._ref + '/'
-    os.makedirs(dirpath, exist_ok=True)
+    topic = input('>>> Remark topic : ')
+    date = input('>>> Date (dd-mm-yyyy) : ')
+    author = input('>>> Author (name-surname) : ')
 
-    name = self._date + '_' + name + '.txt'
-    remark = Remark(path=dirpath, name=name, special=self._type, reference=self._ref)
-    self.check_file (remark)
-
+    remark = Remark(date=date, author=author, topic=topic, special=self._type, reference=self._ref)
+    self.create_file(remark)
     remark.open_editor()
 
     self.upload_file(remark)
 
 
   @staticmethod
-  def check_file (remark):
+  def create_file (remark):
 
-    with Database() as db:
-
-      if remark.docname in list(db.dataframe['DOCNAME']):
-        raise NotImplementedError('Not implemented yet')
-
-    if remark.name not in os.listdir(remark.path):
-      open(remark.path + remark.name, mode='w').close()
+    os.makedirs(remark.path, exist_ok=True)
+    open(remark.path + remark.name, mode='w').close()
 
 
   @staticmethod
@@ -83,7 +77,7 @@ class WriteRemark (RBoost):
 
     with Database() as db:
 
-      data = [[RBoost._date, remark.name, remark.doctype, remark.reference]]
+      data = [[remark.date, remark.author, remark.name, remark.doctype, remark.reference]]
       new_df = pd.DataFrame(data=data, columns=db.dataframe.columns)
       db.dataframe = db.dataframe.append(new_df, ignore_index=True)
 

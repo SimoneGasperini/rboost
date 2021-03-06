@@ -31,13 +31,14 @@ class PDF (Document):
       PDF type
   '''
 
-
   def __init__ (self, name, doctype='standard'):
 
-    path=RBoost._pdfs_path
+    date = RBoost._date
+    author = None
+    path = RBoost._pdfs_path
+    reference = None
 
-    Document.__init__(self, name=name, path=path,
-                      doctype=doctype, reference=None)
+    Document.__init__(self, date, author, path, name, doctype, reference)
 
 
   @property

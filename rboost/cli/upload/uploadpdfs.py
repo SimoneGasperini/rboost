@@ -48,7 +48,7 @@ class UploadPdfs (RBoost):
         if text is None: continue
 
         RBoost.gdrive.upload_file(pdf.path + pdf.name, foldername='pdfs')
-        docs_data.append([pdf.docname, pdf.doctype, pdf.reference])
+        docs_data.append([pdf.date, pdf.author, pdf.docname, pdf.doctype, pdf.reference])
 
         new_labs, new_links = pdf.get_data_from_text(text)
         net.update_nodes(new_labs)

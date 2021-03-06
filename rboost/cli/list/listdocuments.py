@@ -10,7 +10,7 @@ from rboost.source.database import Database
 @RBoost.subcommand ('list-documents')
 class ListDocuments (RBoost):
   '''
-  List the documents on RBoost database
+  List the documents in RBoost database
   '''
 
   _type = None
