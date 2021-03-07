@@ -15,6 +15,27 @@ from googleapiclient import discovery
 
 
 class GDrive ():
+  '''
+  Class to handle Google Drive database
+
+
+  Parameters
+  ----------
+    gdrive_path : str
+      Local path to the client and token files
+
+    gdrive_folders : list of str
+      Google Drive folders
+
+    database_pkl : str
+      Local path to the database pickle file
+
+    network_pkl : str
+      Local path to the network pickle file
+
+    downloads_path : str
+      Local path to the downloads folder
+  '''
 
   mimetypes = {'folder' : 'application/vnd.google-apps.folder',
                'pkl'    : 'application/octet-stream',
@@ -46,6 +67,9 @@ class GDrive ():
 
 
   def _create_service (self):
+    '''
+    Authenticate to Google Drive RBoost's account and create the service
+    '''
 
     cred = None
 
@@ -75,18 +99,16 @@ class GDrive ():
       sys.exit()
 
 
-  def _clear (self):
+  def _reset (self):
+    '''
+    Reset the Google Drive database
+    '''
 
     response = self.service.files().list().execute()
     files = [file['id'] for file in response.get('files')]
 
     for file in files:
       self.service.files().delete(fileId=file).execute()
-
-
-  def _reset (self):
-
-    self._clear()
 
     for foldername in self.gdrive_folders:
       self.create_folder(foldername)
@@ -102,23 +124,63 @@ class GDrive ():
 
 
   def get_id (self, name):
+    '''
+    Get the ID code of a file/folder on the drive
+
+
+    Parameters
+    ----------
+    name : str
+      File/folder name
+
+    Returns
+    -------
+    ID : str
+      File/folder ID
+    '''
 
     query = f'name = "{name}"'
     response = self.service.files().list(q=query).execute()
-    file_id = response.get('files')[0]['id']
+    ID = response.get('files')[0]['id']
 
-    return file_id
+    return ID
 
 
-  def get_mimetype (self, filename):
+  def get_mimetype (self, name):
+    '''
+    Get the mimetype of a file/folder on the drive
 
-    extension = filename.split('.')[-1]
+
+    Parameters
+    ----------
+    name : str
+      File/folder name
+
+    Returns
+    -------
+    mimetype : str
+      File/folder mimetype
+    '''
+
+    if '.' not in name:
+      return self.mimetypes['folder']
+
+    extension = name.split('.')[-1]
     mimetype = self.mimetypes[extension]
 
     return mimetype
 
 
   def create_folder (self, foldername):
+    '''
+    Create a folder on the drive
+
+
+    Parameters
+    ----------
+    foldername : str
+      Folder name
+    '''
 
     mimetype = self.mimetypes['folder']
 
@@ -129,17 +191,46 @@ class GDrive ():
 
 
   def list_folder (self, foldername, field='name'):
+    '''
+    List all the contents of a folder on the drive
+
+
+    Parameters
+    ----------
+    foldername : str
+      Folder name
+
+    field : str, default='name'
+      Metadata to be returned
+
+    Returns
+    -------
+    contents : list of str
+      Folder contents
+    '''
 
     folder_id = self.get_id(foldername)
     query = f'parents = "{folder_id}"'
 
     response = self.service.files().list(q=query).execute()
-    files = [file[field] for file in response.get('files')]
+    contents = [file[field] for file in response.get('files')]
 
-    return files
+    return contents
 
 
   def upload_file (self, filepath, foldername=None):
+    '''
+    Upload a local file into a folder on the drive
+
+
+    Parameters
+    ----------
+    filepath : str
+      Local path to the file
+
+    foldername : str, default=None
+      Name of the destination folder on the drive
+    '''
 
     filename = os.path.basename(filepath)
     file_metadata = {'name' : filename}
@@ -154,16 +245,21 @@ class GDrive ():
     self.service.files().create(body=file_metadata, media_body=media).execute()
 
 
-  def update_file (self, filepath, foldername=None):
+  def update_file (self, filepath):
+    '''
+    Update the file on the drive by using the local file with same name
+
+
+    Parameters
+    ----------
+    filepath : str
+      Local path to the file
+    '''
 
     filename = os.path.basename(filepath)
     file_id = self.get_id(filename)
     file_metadata = self.service.files().get(fileId=file_id).execute()
     del file_metadata['id']
-
-    if foldername is not None:
-      folder_id = self.get_id(foldername)
-      file_metadata['parents'] = [folder_id]
 
     mimetype = self.get_mimetype(filename)
     media = MediaFileUpload(filename=filepath, mimetype=mimetype)
@@ -171,7 +267,19 @@ class GDrive ():
     self.service.files().update(fileId=file_id, body=file_metadata, media_body=media).execute()
 
 
-  def download_file (self, filename, directory=None):
+  def download_file (self, filename, subdir=None):
+    '''
+    Download a file on the drive to the local downloads directory
+
+
+    Parameters
+    ----------
+    filename : str
+      File name
+
+    subdir : str, default=None
+      Optional local sub-directory
+    '''
 
     file_id = self.get_id(filename)
     request = self.service.files().get_media(fileId=file_id)
@@ -182,17 +290,27 @@ class GDrive ():
     while not done:
       status, done = downloader.next_chunk()
 
-    if directory is None:
-      directory = self.downloads_path
+    directory = self.downloads_path
+    if subdir is not None:
+      directory += (subdir + '/')
 
     with open(directory + filename, 'wb') as file:
       file.write(fh.getvalue())
 
 
   def download_folder (self, foldername):
+    '''
+    Download a folder on the drive to the local downloads directory
 
-    os.makedirs(self.downloads_path + foldername, exist_ok=True)
 
-    filenames = self.list_folder(foldername)
-    for fname in filenames:
-      self.download_file(fname, directory=foldername)
+    Parameters
+    ----------
+    foldername : str
+      Folder name
+    '''
+
+    local_dir = self.downloads_path + foldername
+    os.makedirs(local_dir)
+
+    for filename in self.list_folder(foldername):
+      self.download_file(filename, subdir=foldername)
