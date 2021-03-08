@@ -30,17 +30,10 @@ class RBoost (cli.Application):
                   _database_pkl, _network_pkl, _downloads_path)
 
 
-  _remark_types = ['standard',
-                   'problem',
-                   'solution',
-                   'technique',
-                   'reasoning',
-                   'note']
-
   _document_types = ['standard',
                      'notebook',
-                     'figure'] + ['remark:' + t
-                                   for t in _remark_types]
+                     'figure',
+                     'remark']
 
   _keyword_ratios = {'standard' : 0.01,
                      'notebook' : 0.1,

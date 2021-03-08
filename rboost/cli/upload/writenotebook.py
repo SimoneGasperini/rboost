@@ -26,7 +26,7 @@ class WriteNotebook (RBoost):
     date = input('>>> Date (dd-mm-yyyy) : ')
     author = input('>>> Author (name-surname) : ')
 
-    notebook = Notebook(dirname=dirname, date=date, author=author)
+    notebook = Notebook(dirname=dirname, date=date, user=author)
     self.create_file(notebook)
 
     notebook.open_editor()
@@ -80,9 +80,9 @@ class WriteNotebook (RBoost):
 
     with Database() as db:
 
-      data = [[fig.date, fig.author, fig.docname, fig.doctype, fig.reference]
+      data = [[fig.date, fig.user, fig.docname, fig.doctype, fig.reference]
               for fig in figures]
-      data.append([notebook.date, notebook.author, notebook.docname, notebook.doctype, notebook.reference])
+      data.append([notebook.date, notebook.user, notebook.docname, notebook.doctype, notebook.reference])
       new_df = pd.DataFrame(data=data, columns=db.dataframe.columns)
       db.dataframe = db.dataframe.append(new_df, ignore_index=True)
 

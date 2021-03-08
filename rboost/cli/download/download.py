@@ -16,18 +16,17 @@ class Download (RBoost):
 
   def main (self):
 
-    with Database() as db:
-      DOCNAMES = db.dataframe['DOCNAME'].tolist()
-
-    filename = self.get_filename(DOCNAMES)
-    self.check_filename(filename, DOCNAMES)
+    filename = self.get_filename()
 
     RBoost.gdrive.download_file(filename=filename)
     print('>>> The file has been successfully downloaded in the folder "My_Downloads"')
 
 
   @staticmethod
-  def get_filename (DOCNAMES):
+  def get_filename ():
+
+    with Database() as db:
+      DOCNAMES = db.dataframe['DOCNAME'].tolist()    
 
     def complete (text, state):
       for name in DOCNAMES:
@@ -40,17 +39,12 @@ class Download (RBoost):
     readline.parse_and_bind('tab: complete')
     readline.set_completer(complete)
 
-    filename = input('\n>>> Enter the filename (press TAB to autocomplete, enter "q" to quit):\n>>> ')
-    if filename == 'q': sys.exit()
-
-    return filename
-
-
-  @staticmethod
-  def check_filename (filename, DOCNAMES):
+    filename = input('>>> Filename (press TAB to autocomplete)\n>>> ')
 
     if filename not in DOCNAMES:
       colorama.init()
       message = f'FAIL: The file "{filename}" does not exist in RBoost database'
       print('>>> \033[91m' + message + '\033[0m')
       sys.exit()
+
+    return filename

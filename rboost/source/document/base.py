@@ -21,8 +21,8 @@ class Document ():
     date : str
       Document date (dd-mm-yyyy)
 
-    author : str
-      Document author (name-surname)
+    user : str
+      Document author/user (name-surname)
 
     path : str
       Document local path
@@ -37,10 +37,10 @@ class Document ():
       Name of another Document which the Document refers to
   '''
 
-  def __init__ (self, date, author, path, name, doctype, reference):
+  def __init__ (self, date, user, path, name, doctype, reference):
 
     self.date = date
-    self.author = author
+    self.user = user
     self.path = path
     self.name = name
     self.doctype = doctype

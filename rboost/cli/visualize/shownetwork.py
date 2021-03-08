@@ -12,7 +12,6 @@ class ShowNetwork (RBoost):
 
   _num = None
 
-
   @cli.switch ('--num', int)
   def num (self, num):
     '''

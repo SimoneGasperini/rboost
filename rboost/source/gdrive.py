@@ -6,6 +6,7 @@ import pickle
 import networkx as nx
 import pandas as pd
 import colorama
+from tqdm import tqdm
 
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -107,13 +108,13 @@ class GDrive ():
     response = self.service.files().list().execute()
     files = [file['id'] for file in response.get('files')]
 
-    for file in files:
+    for file in tqdm(files, desc='Deleting files', ncols=80):
       self.service.files().delete(fileId=file).execute()
 
     for foldername in self.gdrive_folders:
       self.create_folder(foldername)
 
-    df = pd.DataFrame(columns=['DATE','AUTHOR','DOCNAME','DOCTYPE','REFERENCE'])
+    df = pd.DataFrame(columns=['DATE','USER/AUTHOR','DOCNAME','DOCTYPE','REFERENCE TO'])
     df.to_pickle(self.database_pkl)
     self.upload_file(self.database_pkl)
     os.remove(self.database_pkl)

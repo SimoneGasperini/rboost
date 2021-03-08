@@ -17,7 +17,7 @@ class Remark (Document):
     date : str
       Remark date (dd-mm-yyyy)
 
-    author : str
+    user : str
       Remark author (name-surname)
 
     topic : str
@@ -30,13 +30,13 @@ class Remark (Document):
       Name of another Document which the Remark refers to
   '''
 
-  def __init__ (self, date, author, topic, special='standard', reference=None):
+  def __init__ (self, date, user, topic, special='standard', reference=None):
 
     path = RBoost._remarks_path + reference + '/'
-    name = date + '_' + author + '_' + topic + '.txt'
+    name = date + '_' + user + '_' + topic + '.txt'
     doctype = 'remark:' + special
 
-    Document.__init__(self, date, author, path, name, doctype, reference)
+    Document.__init__(self, date, user, path, name, doctype, reference)
 
 
   @property

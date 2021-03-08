@@ -17,19 +17,21 @@ class UploadPdfs (RBoost):
 
   def main (self):
 
-    pdfs = self.get_pdfs()
+    user = input('>>> User (name-surname) : ')
+
+    pdfs = self.get_pdfs(user)
     self.uploading(pdfs)
 
 
   @staticmethod
-  def get_pdfs ():
+  def get_pdfs (user):
 
     with Database() as db:
 
       docnames = [name for name in os.listdir(RBoost._pdfs_path)
                    if name not in db.dataframe['DOCNAME'].tolist()]
 
-    pdfs = [PDF(name=name) for name in docnames]
+    pdfs = [PDF(user=user, name=name) for name in docnames]
 
     return pdfs
 
@@ -48,7 +50,7 @@ class UploadPdfs (RBoost):
         if text is None: continue
 
         RBoost.gdrive.upload_file(pdf.path + pdf.name, foldername='pdfs')
-        docs_data.append([pdf.date, pdf.author, pdf.docname, pdf.doctype, pdf.reference])
+        docs_data.append([pdf.date, pdf.user, pdf.docname, pdf.doctype, pdf.reference])
 
         new_labs, new_links = pdf.get_data_from_text(text)
         net.update_nodes(new_labs)

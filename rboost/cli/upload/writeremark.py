@@ -1,9 +1,9 @@
 import os
 import sys
+import readline
 
 import colorama
 import pandas as pd
-from plumbum import cli
 
 from rboost.cli.rboost import RBoost
 from rboost.source.database import Database
@@ -17,46 +17,50 @@ class WriteRemark (RBoost):
   Write a special remark on RBoost database
   '''
 
-  _ref = None
-  _type = 'standard'
-
-
-  @cli.switch ('--ref', str, mandatory=True)
-  def ref (self, ref):
-    '''
-    Specify the original document
-    '''
-
-    self._ref = ref
-
-
-  @cli.switch ('--type', str)
-  def type (self, type):
-    '''
-    Specify the remark type
-    '''
-
-    if type not in self._remark_types:
-      colorama.init()
-      message = 'FAIL: Invalid remark type. Choose among the following types:\n\t'
-      types = '\n\t'.join(self._remark_types)
-      print('>>> \033[91m' + message + '\033[0m' + types)
-      sys.exit()
-
-    self._type = type
-
 
   def main (self):
 
+    reference = self.get_ref()
+
+    special = input('>>> Remark type : ')
     topic = input('>>> Remark topic : ')
+
     date = input('>>> Date (dd-mm-yyyy) : ')
     author = input('>>> Author (name-surname) : ')
 
-    remark = Remark(date=date, author=author, topic=topic, special=self._type, reference=self._ref)
+    remark = Remark(date=date, user=author, topic=topic, special=special, reference=reference)
     self.create_file(remark)
     remark.open_editor()
 
     self.upload_file(remark)
+
+
+  @staticmethod
+  def get_ref ():
+
+    with Database() as db:
+      DOCNAMES = db.dataframe['DOCNAME'].tolist()    
+
+    def complete (text, state):
+      for name in DOCNAMES:
+        if name.startswith(text):
+          if state == 0:
+            return name
+          else:
+            state -= 1
+
+    readline.parse_and_bind('tab: complete')
+    readline.set_completer(complete)
+
+    ref = input('>>> Reference file (press TAB to autocomplete)\n>>> ')
+
+    if ref not in DOCNAMES:
+      colorama.init()
+      message = f'FAIL: The file "{ref}" does not exist in RBoost database'
+      print('>>> \033[91m' + message + '\033[0m')
+      sys.exit()
+
+    return ref
 
 
   @staticmethod
@@ -77,7 +81,7 @@ class WriteRemark (RBoost):
 
     with Database() as db:
 
-      data = [[remark.date, remark.author, remark.name, remark.doctype, remark.reference]]
+      data = [[remark.date, remark.user, remark.name, remark.doctype, remark.reference]]
       new_df = pd.DataFrame(data=data, columns=db.dataframe.columns)
       db.dataframe = db.dataframe.append(new_df, ignore_index=True)
 

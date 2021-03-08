@@ -16,8 +16,8 @@ class Figure ():
     date : str
       Figure date (dd-mm-yyyy)
 
-    author : str
-      Figure author (name-surname)
+    user : str
+      Figure author/user (name-surname)
 
     path : str
       Figure local path
@@ -32,10 +32,10 @@ class Figure ():
       Name of another Document where a reference to the Figure is contained
   '''
 
-  def __init__ (self, date, author, path, name, caption=None, reference=None):
+  def __init__ (self, date, user, path, name, caption=None, reference=None):
 
     self.date = date
-    self.author = author
+    self.user = user
     self.path = path
     self.name = name
     self.caption = caption

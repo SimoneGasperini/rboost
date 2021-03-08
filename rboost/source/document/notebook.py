@@ -24,18 +24,18 @@ class Notebook (Document):
     date : str
       Notebook date (dd-mm-yyyy)
 
-    author : str
+    user : str
       Notebook author (name-surname)
   '''
 
-  def __init__ (self, dirname, date, author):
+  def __init__ (self, dirname, date, user):
 
     path = RBoost._notebooks_path + dirname + '/'
-    name = date + '_' + author + '.txt'
+    name = date + '_' + user + '.txt'
     doctype = 'notebook'
     reference = None
 
-    Document.__init__(self, date, author, path, name, doctype, reference)
+    Document.__init__(self, date, user, path, name, doctype, reference)
 
 
   @property
@@ -116,7 +116,7 @@ class Notebook (Document):
     fignames = [line[1:].strip() for line in figlines if line.startswith('-')]
     captions = self.get_fig_captions(figlines)
 
-    figures = [Figure(date=self.date, author=self.author, path=self.path,
+    figures = [Figure(date=self.date, user=self.user, path=self.path,
                       name=name, caption=cap, reference=self.docname)
                for name, cap in zip(fignames, captions)]
 

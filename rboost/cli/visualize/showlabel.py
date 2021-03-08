@@ -1,7 +1,6 @@
 import sys
 
 import colorama
-from plumbum import cli
 
 from rboost.cli.rboost import RBoost
 from rboost.source.network import Network
@@ -13,22 +12,13 @@ class ShowLabel (RBoost):
   Show a label within the RBoost network
   '''
 
-  _order = 1
-
-
-  @cli.switch ('--order', int)
-  def neighbors_order (self, order):
-    '''
-    Specify the maximum neighbors order of the label
-    '''
-
-    self._order = order
-
 
   def main (self):
 
     label = input('>>> Label name : ')
-    self.show_label(name=label, order=self._order)
+    order = int(input('>>> Neighbors order : '))
+
+    self.show_label(name=label, order=order)
 
 
   @staticmethod

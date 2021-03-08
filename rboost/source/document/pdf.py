@@ -24,6 +24,9 @@ class PDF (Document):
 
   Parameters
   ----------
+    user : str
+      PDF user (name-surname)
+
     name : str
       PDF name
 
@@ -31,14 +34,13 @@ class PDF (Document):
       PDF type
   '''
 
-  def __init__ (self, name, doctype='standard'):
+  def __init__ (self, user, name, doctype='standard'):
 
     date = RBoost._date
-    author = None
     path = RBoost._pdfs_path
     reference = None
 
-    Document.__init__(self, date, author, path, name, doctype, reference)
+    Document.__init__(self, date, user, path, name, doctype, reference)
 
 
   @property
