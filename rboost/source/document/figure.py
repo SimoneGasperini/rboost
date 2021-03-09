@@ -1,6 +1,5 @@
 import os
 from itertools import combinations
-
 import pandas as pd
 
 from rboost.source.document.base import Document

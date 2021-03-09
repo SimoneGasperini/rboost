@@ -1,7 +1,5 @@
 from io import StringIO
-
 from tqdm import tqdm
-import colorama
 
 from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
@@ -9,12 +7,12 @@ from pdfminer.pdfdocument import PDFDocument
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfparser import PDFParser
-
 from gensim.parsing.preprocessing import strip_punctuation
 from gensim.parsing.preprocessing import strip_non_alphanum
 
-from rboost.source.document.base import Document
 from rboost.cli.rboost import RBoost
+from rboost.source.document.base import Document
+from rboost.utils.exception import RBException
 
 
 class PDF (Document):
@@ -79,10 +77,8 @@ class PDF (Document):
           interpreter.process_page(page)
 
     except Exception:
-      colorama.init()
-      message = f'WARNING: The pdf file "{self.name}" cannot be read'
-      print('>>> \033[93m' + message + '\033[0m')
-      return None
+      RBException(state='warning', message=f'The pdf file "{self.name}" cannot be read')
+      return
 
     text = output_string.getvalue()
     text = strip_non_alphanum(strip_punctuation(text.lower()))

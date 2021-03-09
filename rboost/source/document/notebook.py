@@ -1,14 +1,11 @@
-import sys
 import os
-
-import colorama
-
 from gensim.parsing.preprocessing import strip_punctuation
 from gensim.parsing.preprocessing import strip_non_alphanum
 
+from rboost.cli.rboost import RBoost
 from rboost.source.document.base import Document
 from rboost.source.document.figure import Figure
-from rboost.cli.rboost import RBoost
+from rboost.utils.exception import RBException
 
 
 class Notebook (Document):
@@ -168,8 +165,6 @@ class Notebook (Document):
                if fig.name not in os.listdir(self.path)]
 
     if missing:
-      colorama.init()
-      message = 'FAIL: The following files do not exist in the notebook directory:\n\t'
-      missing = '\n\t'.join(missing)
-      print('>>> \033[91m' + message + '\033[0m' + missing)
-      sys.exit()
+      RBException(state='failure',
+                  message='The following files do not exist in the notebook directory:\n\t',
+                  args=missing)

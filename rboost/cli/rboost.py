@@ -1,6 +1,5 @@
 import os
 from datetime import datetime
-
 from plumbum import cli
 
 from rboost.source.gdrive import GDrive
@@ -24,7 +23,7 @@ class RBoost (cli.Application):
   _downloads_path = PATH + '/My_Downloads/'
 
   _gdrive_path = PATH + '/client_token/'
-  _gdrive_folders = ['notebook','pdfs','remarks']
+  _gdrive_folders = ['notebooks','pdfs','remarks']
 
   gdrive = GDrive(_gdrive_path, _gdrive_folders,
                   _database_pkl, _network_pkl, _downloads_path)

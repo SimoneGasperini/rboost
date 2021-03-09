@@ -1,14 +1,13 @@
 import os
 import sys
 from stat import S_IREAD, S_IWUSR
-
-import colorama
 import pandas as pd
 
 from rboost.cli.rboost import RBoost
 from rboost.source.database import Database
 from rboost.source.network import Network
 from rboost.source.document.notebook import Notebook
+from rboost.utils.exception import RBException
 
 
 @RBoost.subcommand ('write-notebook')
@@ -58,10 +57,8 @@ class WriteNotebook (RBoost):
     with Database() as db:
 
       if notebook.docname in db.dataframe['DOCNAME'].tolist():
-        colorama.init()
-        message = f'FAIL: The file "{notebook.docname}" already exists in RBoost database'
-        print('>>> \033[91m' + message + '\033[0m')
-        sys.exit()
+        RBException(state='failure',
+                    message=f'The file "{notebook.docname}" already exists in RBoost database')
 
     if notebook.name not in os.listdir(notebook.path):
       with open(notebook.path + notebook.name, mode='w') as file:

@@ -1,10 +1,9 @@
 import os
-
 from gensim.parsing.preprocessing import strip_punctuation
 from gensim.parsing.preprocessing import strip_non_alphanum
 
-from rboost.source.document.base import Document
 from rboost.cli.rboost import RBoost
+from rboost.source.document.base import Document
 
 
 class Remark (Document):

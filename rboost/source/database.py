@@ -1,5 +1,4 @@
 import os
-
 import pandas as pd
 
 from rboost.cli.rboost import RBoost

@@ -1,9 +1,6 @@
-import sys
-
-import colorama
-
 from rboost.cli.rboost import RBoost
 from rboost.source.network import Network
+from rboost.utils.exception import RBException
 
 
 @RBoost.subcommand ('show-label')
@@ -31,7 +28,4 @@ class ShowLabel (RBoost):
         net.show(nodelist=nodelist)
 
       else:
-        colorama.init()
-        message = f'FAIL: Label "{name}" not found in RBoost network'
-        print('>>> \033[91m' + message + '\033[0m')
-        sys.exit()
+        RBException(state='failure', message=f'The label "{name}" was not found in RBoost network')

@@ -1,14 +1,14 @@
 import os
 import sys
-import readline
 
-import colorama
 import pandas as pd
 
 from rboost.cli.rboost import RBoost
 from rboost.source.database import Database
 from rboost.source.network import Network
 from rboost.source.document.remark import Remark
+from rboost.utils.autocomplete import RBAutoComplete
+from rboost.utils.exception import RBException
 
 
 @RBoost.subcommand ('write-remark')
@@ -20,7 +20,7 @@ class WriteRemark (RBoost):
 
   def main (self):
 
-    reference = self.get_ref()
+    reference = self.get_reference()
 
     special = input('>>> Remark type : ')
     topic = input('>>> Remark topic : ')
@@ -36,31 +36,18 @@ class WriteRemark (RBoost):
 
 
   @staticmethod
-  def get_ref ():
+  def get_reference ():
 
     with Database() as db:
-      DOCNAMES = db.dataframe['DOCNAME'].tolist()    
+      docnames = db.dataframe['DOCNAME'].tolist()
 
-    def complete (text, state):
-      for name in DOCNAMES:
-        if name.startswith(text):
-          if state == 0:
-            return name
-          else:
-            state -= 1
+    RBAutoComplete(options=docnames)
+    reference = input('>>> Reference file (press TAB to autocomplete) :\n>>> ')
 
-    readline.parse_and_bind('tab: complete')
-    readline.set_completer(complete)
+    if reference not in docnames:
+      RBException(state='failure', message=f'The file "{reference}" does not exist in RBoost database')
 
-    ref = input('>>> Reference file (press TAB to autocomplete)\n>>> ')
-
-    if ref not in DOCNAMES:
-      colorama.init()
-      message = f'FAIL: The file "{ref}" does not exist in RBoost database'
-      print('>>> \033[91m' + message + '\033[0m')
-      sys.exit()
-
-    return ref
+    return reference
 
 
   @staticmethod

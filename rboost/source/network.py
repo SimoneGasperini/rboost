@@ -1,6 +1,5 @@
 import os
 from collections import Counter
-
 import networkx as nx
 import numpy as np
 import pylab as plt

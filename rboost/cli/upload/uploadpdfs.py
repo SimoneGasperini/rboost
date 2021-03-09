@@ -1,5 +1,4 @@
 import os
-
 import pandas as pd
 
 from rboost.cli.rboost import RBoost
@@ -49,7 +48,7 @@ class UploadPdfs (RBoost):
         text = pdf.get_text()
         if text is None: continue
 
-        RBoost.gdrive.upload_file(pdf.path + pdf.name, foldername='pdfs')
+        RBoost.gdrive.upload_file(pdf.path + pdf.name, parents='pdfs')
         docs_data.append([pdf.date, pdf.user, pdf.docname, pdf.doctype, pdf.reference])
 
         new_labs, new_links = pdf.get_data_from_text(text)

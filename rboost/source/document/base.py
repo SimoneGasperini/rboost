@@ -2,9 +2,7 @@ import os
 import sys
 from itertools import combinations
 from stat import S_IREAD, S_IWUSR
-
 import pandas as pd
-
 import nltk
 from gensim import summarization
 
