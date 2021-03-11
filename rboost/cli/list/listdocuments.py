@@ -36,7 +36,7 @@ class ListDocuments (RBoost):
     with Database() as db:
 
       if self._user is not None:
-        db = db.filter_by('USER/AUTHOR', value=self._user)      
+        db = db.filter_by('USER/AUTHOR', value=self._user)
 
       if self._type is not None:
         db = db.filter_by('DOCTYPE', value=self._type)

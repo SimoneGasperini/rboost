@@ -46,7 +46,7 @@ class Database ():
     '''
 
     self.dataframe.to_pickle(self.filepath)
-    RBoost.gdrive.update_file(self.filepath)
+    RBoost.gdrive.upload_file(self.filepath)
 
     os.remove(self.filepath)
 

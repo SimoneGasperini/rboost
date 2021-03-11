@@ -1,5 +1,4 @@
 from rboost.cli.rboost import RBoost
-from rboost.source.database import Database
 from rboost.utils.autocomplete import RBAutoComplete
 from rboost.utils.exception import RBException
 
@@ -7,28 +6,29 @@ from rboost.utils.exception import RBException
 @RBoost.subcommand ('download')
 class Download (RBoost):
   '''
-  Download a file/folder from RBoost database
+  Download a document from RBoost database
   '''
 
 
   def main (self):
 
-    filename = self.get_filename()
+    docname = self.get_docname()
+    RBoost.gdrive.download_folder(foldername=docname)
 
-    RBoost.gdrive.download_file(filename=filename, parents='pdfs')
     print('>>> Successfully downloaded to "RBoost_Data/My_Downloads"')
 
 
   @staticmethod
-  def get_filename ():
+  def get_docname ():
 
-    with Database() as db:
-      docnames = db.dataframe['DOCNAME'].tolist()
+    pdfs = RBoost.gdrive.list_folder(foldername='pdfs', field='title')
+    notebooks = RBoost.gdrive.list_folder(foldername='notebooks', field='title')
+    docnames = pdfs + notebooks
 
     RBAutoComplete(options=docnames)
-    filename = input('>>> Filename (press TAB to autocomplete) :\n>>> ')
+    name = input('\n>>> Document name (press TAB to autocomplete) :\n>>> ')
 
-    if filename not in docnames:
-      RBException(state='failure', message=f'The file "{filename}" does not exist in RBoost database')
+    if name not in docnames:
+      RBException(state='failure', message=f'The document "{name}" does not exist in RBoost database')
 
-    return filename
+    return name

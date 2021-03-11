@@ -14,7 +14,7 @@ class RBException ():
     self.message = message
 
     if args is not None:
-      self.message += '/n/t'.join(args)
+      self.message += '\n\t'.join(args)
 
     self.throw()
 

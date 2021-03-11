@@ -2,7 +2,6 @@ import os
 from gensim.parsing.preprocessing import strip_punctuation
 from gensim.parsing.preprocessing import strip_non_alphanum
 
-from rboost.cli.rboost import RBoost
 from rboost.source.document.base import Document
 from rboost.source.document.figure import Figure
 from rboost.utils.exception import RBException
@@ -15,24 +14,25 @@ class Notebook (Document):
 
   Parameters
   ----------
-    dirname : str
-      Notebook directory name
-
     date : str
       Notebook date (dd-mm-yyyy)
 
     user : str
       Notebook author (name-surname)
+
+    path : str
+      Notebook local path
   '''
 
-  def __init__ (self, dirname, date, user):
+  def __init__ (self, date, user, path):
 
-    path = RBoost._notebooks_path + dirname + '/'
     name = date + '_' + user + '.txt'
     doctype = 'notebook'
-    reference = None
 
-    Document.__init__(self, date, user, path, name, doctype, reference)
+    Document.__init__(self,
+                      date=date, user=user,
+                      path=path, name=name,
+                      doctype=doctype)
 
 
   @property
@@ -63,7 +63,7 @@ class Notebook (Document):
     return text
 
 
-  def get_text_paragraph (self):
+  def get_text (self):
     '''
     Get the pre-processed text extracted from the Notebook '#TEXT' section
 
@@ -113,9 +113,8 @@ class Notebook (Document):
     fignames = [line[1:].strip() for line in figlines if line.startswith('-')]
     captions = self.get_fig_captions(figlines)
 
-    figures = [Figure(date=self.date, user=self.user, path=self.path,
-                      name=name, caption=cap, reference=self.docname)
-               for name, cap in zip(fignames, captions)]
+    figures = [Figure(date=self.date, user=self.user, path=self.path, name=name, caption=caption)
+               for name, caption in zip(fignames, captions)]
 
     return figures
 
@@ -155,7 +154,7 @@ class Notebook (Document):
     return captions
 
 
-  def check_figs (self):
+  def check_figures (self):
     '''
     Check if the Notebook directory contains all the figures files referenced
     in the Notebook document

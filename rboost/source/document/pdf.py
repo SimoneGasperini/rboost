@@ -10,7 +10,6 @@ from pdfminer.pdfparser import PDFParser
 from gensim.parsing.preprocessing import strip_punctuation
 from gensim.parsing.preprocessing import strip_non_alphanum
 
-from rboost.cli.rboost import RBoost
 from rboost.source.document.base import Document
 from rboost.utils.exception import RBException
 
@@ -22,23 +21,27 @@ class PDF (Document):
 
   Parameters
   ----------
+    date : str (dd-mm-yyyy)
+      PDF upload date
+
     user : str
-      PDF user (name-surname)
+      PDF upload user (name-surname)
+
+    path : str
+      PDF local path
 
     name : str
       PDF name
-
-    doctype : str, default='standard'
-      PDF type
   '''
 
-  def __init__ (self, user, name, doctype='standard'):
+  def __init__ (self, date, user, path, name):
 
-    date = RBoost._date
-    path = RBoost._pdfs_path
-    reference = None
+    doctype = 'standard'
 
-    Document.__init__(self, date, user, path, name, doctype, reference)
+    Document.__init__(self,
+                      date=date, user=user,
+                      path=path, name=name,
+                      doctype=doctype)
 
 
   @property

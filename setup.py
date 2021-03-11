@@ -1,6 +1,6 @@
 import os
 
-from shutil import copyfile
+from shutil import copy
 
 from setuptools import setup
 from setuptools import find_packages
@@ -8,20 +8,22 @@ from setuptools import find_packages
 import nltk
 
 
-PATH = os.path.expanduser('~/Desktop/RBoost_Data').replace('\\','/')
-CLIENT = './client.json'
-TOKEN = './token.pkl'
-REQUIREMENTS = './requirements.txt'
+RBOOST_DATA_PATH = os.path.expanduser('~/Desktop/RBoost_Data/').replace('\\','/')
+CLIENT_SECRETS   = './client_secrets.json'
+CREDENTIALS      = './credentials.txt'
+REQUIREMENTS     = './requirements.txt'
 
 
-dirs = ['/My_Documents/pdfs','/My_Documents/notebooks','/My_Documents/remarks',
-        '/My_Downloads','/client_token']
-for d in dirs:
-  os.makedirs(PATH + d, exist_ok=True)
+directories = ['My_Documents/pdfs',
+               'My_Documents/notebooks',
+               'My_Documents/remarks',
+               'My_Downloads']
+for directory in directories:
+  os.makedirs(RBOOST_DATA_PATH + directory, exist_ok=True)
 
 
-copyfile(CLIENT, PATH + dirs[-1] + CLIENT[1:])
-copyfile(TOKEN, PATH + dirs[-1] + TOKEN[1:])
+copy(src=CLIENT_SECRETS, dst=RBOOST_DATA_PATH)
+copy(src=CREDENTIALS, dst=RBOOST_DATA_PATH)
 
 
 nltk.download('wordnet')
@@ -29,7 +31,6 @@ nltk.download('wordnet')
 
 with open(REQUIREMENTS, 'r') as file:
   requirements = file.read().splitlines()
-
 
 setup (
 

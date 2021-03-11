@@ -26,19 +26,15 @@ class Figure ():
 
     caption : str, default=None
       Figure caption
-
-    reference : str, default=None
-      Name of another Document where a reference to the Figure is contained
   '''
 
-  def __init__ (self, date, user, path, name, caption=None, reference=None):
+  def __init__ (self, date, user, path, name, caption=None):
 
     self.date = date
     self.user = user
     self.path = path
     self.name = name
     self.caption = caption
-    self.reference = reference
 
     self.doctype = 'figure'
 

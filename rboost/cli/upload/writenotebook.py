@@ -1,7 +1,7 @@
 import os
 import sys
-from stat import S_IREAD, S_IWUSR
 import pandas as pd
+from tqdm import tqdm
 
 from rboost.cli.rboost import RBoost
 from rboost.source.database import Database
@@ -24,15 +24,19 @@ class WriteNotebook (RBoost):
 
     date = input('>>> Date (dd-mm-yyyy) : ')
     author = input('>>> Author (name-surname) : ')
+    path = RBoost._notebooks_path + dirname + '/'
 
-    notebook = Notebook(dirname=dirname, date=date, user=author)
+    notebook = Notebook(date=date, user=author, path=path)
     self.create_file(notebook)
 
     notebook.open_editor()
-    notebook.check_figs()
+    notebook.check_figures()
 
-    self.upload_file(notebook)
-    self.update_document(dirname, notebook)
+    figures = notebook.get_figures()
+    self.upload_files(notebook, figures)
+
+    self.update_database(notebook, figures)
+    self.update_network(notebook, figures)
 
 
   @staticmethod
@@ -42,13 +46,17 @@ class WriteNotebook (RBoost):
 
     if os.path.exists(dirpath):
       print(f'>>> The notebook "{dirname}" already exists, do you want to add a page?')
-      if not input('>>> (y/n) ') == 'y': sys.exit()
+      answer = input('>>> (y/n) ')
+      if not answer == 'y':
+        sys.exit()
 
     else:
       print(f'>>> The notebook "{dirname}" does not exist yet, do you want to create it?')
-      if not input('>>> (y/n) ') == 'y': sys.exit()
-
-    os.makedirs(dirpath, exist_ok=True)
+      answer = input('>>> (y/n) ')
+      if answer == 'y':
+        os.makedirs(dirpath)
+      else:
+        sys.exit()
 
 
   @staticmethod
@@ -66,45 +74,46 @@ class WriteNotebook (RBoost):
 
 
   @staticmethod
-  def upload_file (notebook):
+  def upload_files (notebook, figures):
 
-    print(f'>>> Are you sure to upload the file "{notebook.docname}" on RBoost database?')
-    if not input('>>> (y/n) ') == 'y': sys.exit()
+    print(f'>>> Do you want to upload the file "{notebook.docname}" on RBoost database?')
+    answer = input('>>> (y/n) ')
+    if not answer == 'y':
+      sys.exit()
 
     print(f'>>> Uploading "{notebook.docname}"')
-    text = notebook.get_text_paragraph()
-    figures = notebook.get_figures()
+
+    folder = notebook.docname.split('/')[0]
+    RBoost.gdrive.create_folder(foldername=folder, parent_folder='notebooks')
+
+    filepaths = [notebook.path + notebook.name] + [fig.path + fig.name for fig in figures]
+
+    for filepath in tqdm(filepaths, desc='Uploading files', ncols=80):
+      RBoost.gdrive.upload_file(filepath=filepath, parent_folder=folder)
+
+
+  @staticmethod
+  def update_database (notebook, figures):
 
     with Database() as db:
 
-      data = [[fig.date, fig.user, fig.docname, fig.doctype, fig.reference]
+      data = [[fig.date, fig.user, fig.docname, fig.doctype]
               for fig in figures]
-      data.append([notebook.date, notebook.user, notebook.docname, notebook.doctype, notebook.reference])
+      data.append([notebook.date, notebook.user, notebook.docname, notebook.doctype])
+
       new_df = pd.DataFrame(data=data, columns=db.dataframe.columns)
       db.dataframe = db.dataframe.append(new_df, ignore_index=True)
+
+
+  @staticmethod
+  def update_network (notebook, figures):
+
+    text = notebook.get_text()
 
     with Network() as net:
 
       text_labs, text_links = notebook.get_data_from_text(text)
       figs_labs, figs_links = notebook.get_data_from_figures(figures)
+
       net.update_nodes(text_labs + figs_labs)
       net.update_edges(text_links + figs_links)
-
-
-  @staticmethod
-  def update_document (dirname, notebook):
-
-    dirpath = RBoost._notebooks_path + dirname + '/'
-    docname = dirname + '.txt'
-
-    title = notebook.name + '\n' + ('-' * len(notebook.name)) + '\n'
-    text = notebook.read()
-    separator = ('\n' * 4) + (('#'*100 + '\n') * 2) + ('\n' * 3)
-
-    if docname in os.listdir(dirpath):
-      os.chmod(dirpath + docname, S_IWUSR|S_IREAD)
-
-    with open(dirpath + docname, mode='a') as doc:
-      doc.write(title + text + separator)
-
-    os.chmod(dirpath + docname, S_IREAD)

@@ -30,19 +30,15 @@ class Document ():
 
     doctype : str
       Document type
-
-    reference : str
-      Name of another Document which the Document refers to
   '''
 
-  def __init__ (self, date, user, path, name, doctype, reference):
+  def __init__ (self, date, user, path, name, doctype):
 
     self.date = date
     self.user = user
     self.path = path
     self.name = name
     self.doctype = doctype
-    self.reference = reference
 
 
   @staticmethod
@@ -66,7 +62,7 @@ class Document ():
       Extracted keywords mapped to their score
     '''
 
-    typing = doctype[:6] if doctype.startswith('remark:') else doctype
+    typing = doctype.split('-')[0]
     ratio = RBoost._keyword_ratios[typing]
 
     raw_kws = summarization.keywords(text, ratio=ratio, scores=True, lemmatize=True, split=True)

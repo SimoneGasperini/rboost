@@ -2,7 +2,6 @@ import os
 from gensim.parsing.preprocessing import strip_punctuation
 from gensim.parsing.preprocessing import strip_non_alphanum
 
-from rboost.cli.rboost import RBoost
 from rboost.source.document.base import Document
 
 
@@ -19,23 +18,25 @@ class Remark (Document):
     user : str
       Remark author (name-surname)
 
-    topic : str
-      Remark topic name
+    path : str
+      Remark local path
+
+    name : str
+      Remark specific name
 
     special : str, default='standard'
       Remark special type
-
-    reference : str, default=None
-      Name of another Document which the Remark refers to
   '''
 
-  def __init__ (self, date, user, topic, special='standard', reference=None):
+  def __init__ (self, date, user, path, name, special='standard'):
 
-    path = RBoost._remarks_path + reference + '/'
-    name = date + '_' + user + '_' + topic + '.txt'
-    doctype = 'remark:' + special
+    doctype = 'remark-' + special
+    name = doctype + '_' + name + '.txt'
 
-    Document.__init__(self, date, user, path, name, doctype, reference)
+    Document.__init__(self,
+                      date=date, user=user,
+                      path=path, name=name,
+                      doctype=doctype)
 
 
   @property

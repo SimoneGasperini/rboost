@@ -49,7 +49,7 @@ class Network ():
     '''
 
     nx.readwrite.write_gpickle(self.graph, self.filepath)
-    RBoost.gdrive.update_file(self.filepath)
+    RBoost.gdrive.upload_file(self.filepath)
 
     os.remove(self.filepath)
 
