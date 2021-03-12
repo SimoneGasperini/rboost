@@ -19,9 +19,6 @@ class WriteRemark (RBoost):
 
   def main (self):
 
-    date = input('>>> Date (dd-mm-yyyy) : ')
-    author = input('>>> Author (name-surname) : ')
-
     reference = self.get_reference()
     path = RBoost._remarks_path + reference + '/'
     os.makedirs(path, exist_ok=True)
@@ -29,7 +26,7 @@ class WriteRemark (RBoost):
     name = input('>>> Remark name : ')
     special = input('>>> Remark type : ')
 
-    remark = Remark(date=date, user=author, path=path, name=name, special=special)
+    remark = Remark(date=None, user=None, path=path, name=name, special=special)
     self.create_file(remark)
 
     remark.open_editor()
@@ -60,7 +57,8 @@ class WriteRemark (RBoost):
   @staticmethod
   def create_file (remark):
 
-    open(remark.path + remark.name, mode='w').close()
+    if not os.path.exists(remark.path + remark.name):
+      open(remark.path + remark.name, mode='w').close()
 
 
   @staticmethod
@@ -70,6 +68,9 @@ class WriteRemark (RBoost):
     answer = input('>>> (y/n) ')
     if not answer == 'y':
       sys.exit()
+
+    remark.date = input('>>> Date (dd-mm-yyyy) : ')
+    remark.user = input('>>> Author (name-surname) : ')
 
     print(f'>>> Uploading "{remark.docname}"')
 
