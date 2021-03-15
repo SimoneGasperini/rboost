@@ -1,49 +1,62 @@
 from plumbum import cli
 
 from rboost.cli.rboost import RBoost
-from rboost.source.network import Network
 
 
 @RBoost.subcommand ('show-network')
 class ShowNetwork (RBoost):
-  '''
+  """
   Show the RBoost network
-  '''
+  """
 
-  _num = None
+  _labtype = None
+  _number = None
 
-  @cli.switch ('--num', int)
-  def num (self, num):
-    '''
-    Selects a fixed number of the most important labels
-    '''
+  @cli.switch ('--labtype', str)
+  def labtype (self, labtype):
+    """
+    Selects labels with the specified type
+    """
 
-    self._num = num
+    self._labtype = labtype
 
+  @cli.switch ('--number', int)
+  def number (self, number):
+    """
+    Selects a fixed number of labels
+    """
+
+    self._number = number
 
   def main (self):
 
-    if self._num is None:
-      self.show_full()
+    nodelist = self.get_nodelist()
+    self.network.show(nodelist=nodelist)
 
-    else:
-      self.show_sub(num=self._num)
+  def get_nodelist (self):
 
+    nodelist = self.labnames_list
 
-  @staticmethod
-  def show_full ():
+    if self._labtype is not None:
+      nodelist = self.filter_by_type(nodelist)
 
-    with Network() as net:
+    if self._number is not None:
+      nodelist = self.select_number(nodelist)
 
-      net.show()
+    return nodelist
 
+  def filter_by_type (self, nodelist):
 
-  @staticmethod
-  def show_sub (num):
+    nodelist = [self.network.graph.nodes[n]['label'].name for n in nodelist
+                if self._labtype in self.network.graph.nodes[n]['label'].types]
 
-    with Network() as net:
+    return nodelist
 
-      labels = net.get_labels(sort=True)
-      nodelist = [lab.name for lab in labels[:num]]
+  def select_number (self, nodelist):
 
-    net.show(nodelist=nodelist)
+    if len(nodelist) > self._number:
+
+      labels = sorted([self.network.graph.nodes[n]['label'] for n in nodelist], reverse=True)
+      nodelist = [lab.name for lab in labels[:self._number]]
+
+    return nodelist

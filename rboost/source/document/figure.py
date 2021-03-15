@@ -5,8 +5,8 @@ import pandas as pd
 from rboost.source.document.base import Document
 
 
-class Figure ():
-  '''
+class Figure:
+  """
   Class for the Figure object
 
 
@@ -26,7 +26,7 @@ class Figure ():
 
     caption : str, default=None
       Figure caption
-  '''
+  """
 
   def __init__ (self, date, user, path, name, caption=None):
 
@@ -38,20 +38,18 @@ class Figure ():
 
     self.doctype = 'figure'
 
-
   @property
   def docname (self):
-    '''
+    """
     Full Figure name (str)
-    '''
+    """
 
     docname = os.path.basename(self.path[:-1]) + '/' + self.name
 
     return docname
 
-
   def get_caption_data (self):
-    '''
+    """
     Get the structured data extracted from the Figure caption, ready to be
     used to update RBoost's labels network
 
@@ -63,9 +61,10 @@ class Figure ():
 
     edges : list of tuple
       Links between labels (None if the caption is None)
-    '''
+    """
 
-    if self.caption is None: return None
+    if self.caption is None:
+      return None
 
     docname = self.docname
     doctype = labtype = 'caption'

@@ -1,34 +1,33 @@
 from rboost.cli.rboost import RBoost
-from rboost.utils.autocomplete import RBAutoComplete
-from rboost.utils.exception import RBException
+from rboost.utils.autocomplete import AutoComplete
+from rboost.utils.exceptions import Exceptions
 
 
 @RBoost.subcommand ('download')
 class Download (RBoost):
-  '''
+  """
   Download a document from RBoost database
-  '''
-
+  """
 
   def main (self):
 
     docname = self.get_docname()
-    RBoost.gdrive.download_folder(foldername=docname)
+    self.gdrive.download_folder(foldername=docname)
 
     print('>>> Successfully downloaded to "RBoost_Data/My_Downloads"')
 
+  def get_docname (self):
 
-  @staticmethod
-  def get_docname ():
+    pdfs = self.gdrive.list_folder(foldername='pdfs', field='title')
+    notebooks = self.gdrive.list_folder(foldername='notebooks', field='title')
+    docs_list = pdfs + notebooks
 
-    pdfs = RBoost.gdrive.list_folder(foldername='pdfs', field='title')
-    notebooks = RBoost.gdrive.list_folder(foldername='notebooks', field='title')
-    docnames = pdfs + notebooks
+    with AutoComplete(options=docs_list):
+      docname = input('>>> Document name :\n>>> ')
 
-    RBAutoComplete(options=docnames)
-    name = input('\n>>> Document name (press TAB to autocomplete) :\n>>> ')
+    if docname not in docs_list:
+      e = Exceptions(state='failure',
+                     message=f'The document "{docname}" does not exist in RBoost database')
+      e.throw()
 
-    if name not in docnames:
-      RBException(state='failure', message=f'The document "{name}" does not exist in RBoost database')
-
-    return name
+    return docname

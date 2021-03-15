@@ -1,44 +1,40 @@
 from plumbum import cli
-
 from rboost.cli.rboost import RBoost
-from rboost.source.database import Database
 
 
 @RBoost.subcommand ('list-documents')
 class ListDocuments (RBoost):
-  '''
+  """
   List the documents in RBoost database
-  '''
+  """
 
   _user = None
-  _type = None
+  _doctype = None
 
   @cli.switch ('--user', str)
   def user (self, user):
-    '''
+    """
     Selects documents with the specified user/author
-    '''
+    """
 
     self._user = user
 
-
-  @cli.switch ('--type', str)
-  def type (self, type):
-    '''
+  @cli.switch ('--doctype', str)
+  def doctype (self, doctype):
+    """
     Selects documents with the specified type
-    '''
+    """
 
-    self._type = type
-
+    self._doctype = doctype
 
   def main (self):
 
-    with Database() as db:
+    df = self.database.dataframe
 
-      if self._user is not None:
-        db = db.filter_by('USER/AUTHOR', value=self._user)
+    if self._user is not None:
+      df = df.loc[df['USER/AUTHOR'] == self._user]
 
-      if self._type is not None:
-        db = db.filter_by('DOCTYPE', value=self._type)
+    if self._doctype is not None:
+      df = df.loc[df['DOCTYPE'] == self._doctype]
 
-    db.show(full=True)
+    self.show_dataframe(df=df, full=True)

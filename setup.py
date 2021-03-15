@@ -8,7 +8,7 @@ from setuptools import find_packages
 import nltk
 
 
-RBOOST_DATA_PATH = os.path.expanduser('~/Desktop/RBoost_Data/').replace('\\','/')
+RBOOST_DATA_PATH = os.path.expanduser('~/Desktop/RBoost_Data/').replace('\\', '/')
 CLIENT_SECRETS   = './client_secrets.json'
 CREDENTIALS      = './credentials.txt'
 REQUIREMENTS     = './requirements.txt'

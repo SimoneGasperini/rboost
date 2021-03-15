@@ -1,102 +1,82 @@
 import os
-import pandas as pd
 
 from rboost.cli.rboost import RBoost
-from rboost.source.database import Database
-from rboost.source.network import Network
 from rboost.source.document.pdf import PDF
 
 
 @RBoost.subcommand ('upload-pdfs')
 class UploadPdfs (RBoost):
-  '''
+  """
   Upload the pdf documents on RBoost database
-  '''
-
+  """
 
   def main (self):
 
-    user = input('>>> User (name-surname) : ')
+    user = self.get_user()
+    date = self.get_date(auto=True)
 
     self.create_dirs()
-    pdfs = self.get_pdfs(user)
-    data = []
+    pdfs = self.get_pdfs(date, user)
 
-    with Network() as net:
+    self.upload_documents(pdfs)
 
-      for pdf in pdfs:
+    self.database.push()
+    self.network.push()
 
-        print(f'>>> Uploading "{pdf.name}"')
-        text = pdf.get_text()
-        if text is None: continue
+  def create_dirs (self):
 
-        self.upload_drive(pdf)
-        self.update_network(net, pdf, text)
+    for item in os.listdir(self.pdfs_path):
 
-        data.append([pdf.date, pdf.user, pdf.docname, pdf.doctype])
-
-    self.update_database(data=data)
-
-
-  @staticmethod
-  def get_pdfs (user):
-
-    with Database() as db:
-
-      already_uploaded = db.dataframe['DOCNAME'].tolist()
-
-    for dirname in os.listdir(RBoost._pdfs_path):
-
-      pdfs = [PDF(date = RBoost._date,
-                  user = user,
-                  path = RBoost._pdfs_path + dirname + '/',
-                  name = dirname + '.pdf')
-              for dirname in os.listdir(RBoost._pdfs_path)
-              if dirname + '.pdf' not in already_uploaded]
-
-    return pdfs
-
-
-  @staticmethod
-  def create_dirs ():
-
-    for item in os.listdir(RBoost._pdfs_path):
-
-      item_path = RBoost._pdfs_path + item
+      item_path = self.pdfs_path + item
 
       if os.path.isfile(item_path) and item.endswith('.pdf'):
 
-        filename = item.replace(' ','_')
+        filename = item.replace(' ', '_')
         dirname = filename.split('.')[0]
 
-        os.makedirs(RBoost._pdfs_path + dirname, exist_ok=True)
-        new_path = RBoost._pdfs_path + dirname + '/' + filename
+        os.makedirs(self.pdfs_path + dirname, exist_ok=True)
+        new_path = self.pdfs_path + dirname + '/' + filename
         os.rename(item_path, new_path)
 
+  def get_pdfs (self, date, user):
 
-  @staticmethod
-  def upload_drive (pdf):
+    pdfs = [PDF(date = date,
+                user = user,
+                path = self.pdfs_path + dirname + '/',
+                name = dirname + '.pdf')
+            for dirname in os.listdir(self.pdfs_path)
+            if dirname + '.pdf' not in self.docnames_list]
+
+    return pdfs
+
+  def upload_documents (self, pdfs):
+
+    for pdf in pdfs:
+
+      print(f'>>> Uploading "{pdf.name}"')
+      text = pdf.get_text()
+      if text is None:
+        continue
+
+      self.upload_file(pdf)
+      self.update_database(pdf)
+      self.update_network(pdf, text)
+
+  def upload_file (self, pdf):
 
     dirname = pdf.name.split('.')[0]
     filepath = pdf.path + pdf.name
 
-    RBoost.gdrive.create_folder(foldername=dirname, parent_folder='pdfs')
-    RBoost.gdrive.upload_file(filepath=filepath, parent_folder=dirname)
+    self.gdrive.create_folder(foldername=dirname, parent_folder='pdfs')
+    self.gdrive.upload_file(filepath=filepath, parent_folder=dirname)
 
-
-  @staticmethod
-  def update_network (net, pdf, text):
+  def update_network (self, pdf, text):
 
     new_labs, new_links = pdf.get_data_from_text(text)
+    self.network.update_nodes(new_labs)
+    self.network.update_edges(new_links)
 
-    net.update_nodes(new_labs)
-    net.update_edges(new_links)
+  def update_database (self, pdf):
 
-
-  @staticmethod
-  def update_database (data):
-
-    with Database() as db:
-
-      new_df = pd.DataFrame(data=data, columns=db.dataframe.columns)
-      db.dataframe = db.dataframe.append(new_df, ignore_index=True)
+    data = [[pdf.date, pdf.user, pdf.docname, pdf.doctype]]
+    self.database.append_data(data)

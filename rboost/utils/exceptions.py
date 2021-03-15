@@ -2,11 +2,10 @@ import sys
 import colorama
 
 
-class RBException ():
+class Exceptions:
 
-  color = {'failure' : lambda msg: '\033[91mFAILURE: ' + msg + '\033[0m',
-           'warning' : lambda msg: '\033[93mWARNING: ' + msg + '\033[0m'}
-
+  color = {'failure': lambda msg: '\033[91mFAILURE: ' + msg + '\033[0m',
+           'warning': lambda msg: '\033[93mWARNING: ' + msg + '\033[0m'}
 
   def __init__ (self, state, message, args=None):
 
@@ -15,9 +14,6 @@ class RBException ():
 
     if args is not None:
       self.message += '\n\t'.join(args)
-
-    self.throw()
-
 
   def throw (self):
 

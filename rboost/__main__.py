@@ -12,9 +12,8 @@ from rboost.cli.list.listdocuments import ListDocuments
 from rboost.cli.list.listlabels import ListLabels
 
 from rboost.cli.visualize.shownetwork import ShowNetwork
-from rboost.cli.visualize.showlabel import ShowLabel
+from rboost.cli.visualize.showlabels import ShowLabels
 from rboost.cli.visualize.printlabel import PrintLabel
-
 
 
 if __name__ == '__main__':

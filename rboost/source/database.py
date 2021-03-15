@@ -1,104 +1,51 @@
 import os
 import pandas as pd
 
-from rboost.cli.rboost import RBoost
 
-
-class Database ():
-  '''
-  Class for the RBoost's database object
+class Database:
+  """
+  Class for RBoost's documents database
 
 
   Parameters
   ----------
-    dataframe : pandas.DataFrame, default=None
-      Table which represents the RBoost's documents database
-  '''
+  filepath : str
+    Local path to the database pickle file
 
-  def __init__ (self, dataframe=None):
+  gdrive : gdrive.GDrive
+    RBoost's Google Drive object
+  """
 
-    self.filepath = RBoost._database_pkl
-    self.filename = os.path.basename(self.filepath)
+  def __init__ (self, filepath, gdrive):
 
-    self.dataframe = dataframe
+    self.filepath = filepath
+    self.gdrive = gdrive
 
-
-  def __enter__ (self):
-    '''
-    Enter the context manager downloading the Google Drive database pickle file
-    and reading its content
-
-
-    Returns
-    -------
-    self
-    '''
-
-    RBoost.gdrive.download_file(self.filename)
+    self.gdrive.download_file(filename=os.path.basename(self.filepath))
     self.dataframe = pd.read_pickle(self.filepath)
-
-    return self
-
-
-  def __exit__ (self, exc_type, exc_value, exc_traceback):
-    '''
-    Exit the context manager uploading the database pickle file to Google Drive
-    '''
-
-    self.dataframe.to_pickle(self.filepath)
-    RBoost.gdrive.upload_file(self.filepath)
 
     os.remove(self.filepath)
 
+  def push (self):
+    """
+    Write the database pickle file and upload it to Google Drive
+    """
 
-  def filter_by (self, column, value):
-    '''
-    Filter the database selecting only the table rows whose entry in the
-    given column is equal to the given value
+    self.dataframe.to_pickle(self.filepath)
+    self.gdrive.upload_file(self.filepath)
 
+    os.remove(self.filepath)
 
-    Parameters
-    ----------
-    column : str
-      Column name
-
-    value : str
-      Value to check in the given column
-
-    Returns
-    -------
-    database : Database
-      Filtered database
-    '''
-
-    dataframe = self.dataframe.loc[self.dataframe[column] == value]
-    database = Database(dataframe=dataframe)
-
-    return database
-
-
-  def clear (self):
-    '''
-    Clear the database by removing all the table rows
-    '''
-
-    self.dataframe = self.dataframe.iloc[0:0]
-
-
-  def show (self, full=False):
-    '''
-    Print the database table to terminal
+  def append_data (self, data):
+    """
+    Append new data to the dataframe according to its columns structure
 
 
     Parameters
     ----------
-    full : bool, default=False
-      If True, display all the rows
-    '''
+    data : list of list
+      Structured data
+    """
 
-    pd.set_option('colheader_justify', 'right')
-
-    if full:
-      pd.set_option('display.max_rows', None)
-
-    print(self.dataframe)
+    df = pd.DataFrame(data=data, columns=self.dataframe.columns)
+    self.dataframe = self.dataframe.append(df, ignore_index=True)

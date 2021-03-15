@@ -11,11 +11,11 @@ from gensim.parsing.preprocessing import strip_punctuation
 from gensim.parsing.preprocessing import strip_non_alphanum
 
 from rboost.source.document.base import Document
-from rboost.utils.exception import RBException
+from rboost.utils.exceptions import Exceptions
 
 
 class PDF (Document):
-  '''
+  """
   Class for the PDF document object
 
 
@@ -32,7 +32,7 @@ class PDF (Document):
 
     name : str
       PDF name
-  '''
+  """
 
   def __init__ (self, date, user, path, name):
 
@@ -43,20 +43,18 @@ class PDF (Document):
                       path=path, name=name,
                       doctype=doctype)
 
-
   @property
   def docname (self):
-    '''
+    """
     Full PDF name (str)
-    '''
+    """
 
     docname = self.name
 
     return docname
 
-
   def get_text (self):
-    '''
+    """
     Get the pre-processed text extracted from the PDF document
 
 
@@ -64,7 +62,7 @@ class PDF (Document):
     -------
     text : str
       Extracted text (None if the extraction fails)
-    '''
+    """
 
     output_string = StringIO()
 
@@ -79,8 +77,8 @@ class PDF (Document):
         for page in tqdm(list(PDFPage.create_pages(document)), ncols=80):
           interpreter.process_page(page)
 
-    except Exception:
-      RBException(state='warning', message=f'The pdf file "{self.name}" cannot be read')
+    except Exceptions(state='warning', message=f'The pdf file "{self.name}" cannot be read') as e:
+      e.throw()
       return
 
     text = output_string.getvalue()
@@ -88,22 +86,20 @@ class PDF (Document):
 
     return text
 
-
   def open_editor (self):
-    '''
+    """
     Raises
     ------
     NotImplementedError
-    '''
+    """
 
     raise NotImplementedError
 
-
   def get_data_from_figures (self, figures):
-    '''
+    """
     Raises
     ------
     NotImplementedError
-    '''
+    """
 
     raise NotImplementedError

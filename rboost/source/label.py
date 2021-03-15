@@ -1,8 +1,8 @@
 import pandas as pd
 
 
-class Label ():
-  '''
+class Label:
+  """
   Class for the label object
 
 
@@ -23,24 +23,26 @@ class Label ():
     mentions : pandas.DataFrame, default=pandas.DataFrame(columns=['DOCNAME','TYPE','SCORE']))
       Table to store the important mentions of the label in the uploaded
       documents, together with their type and their score
-  '''
+  """
 
   def __init__ (self,
                 name,
-                types         = [],
+                types         = None,
                 queries_count = 0,
                 uploads_count = 0,
-                mentions      = pd.DataFrame(columns=['DOCNAME','TYPE','SCORE'])):
+                mentions      = pd.DataFrame(columns=['DOCNAME', 'TYPE', 'SCORE'])):
 
     self.name = name
-    self.types = types
+
+    if types is None:
+      self.types = []
+
     self.queries_count = queries_count
     self.uploads_count = uploads_count
     self.mentions = mentions
 
-
   def __lt__ (self, other):
-    '''
+    """
     Compare the importance of two labels
 
 
@@ -53,7 +55,7 @@ class Label ():
     -------
     less_than : bool
       Result
-    '''
+    """
 
     count1 = self.queries_count + self.uploads_count
     count2 = other.queries_count + other.uploads_count
@@ -61,17 +63,16 @@ class Label ():
 
     return less_than
 
-
   def update (self, labinfo):
-    '''
-    Update the label using the new information contained in labsinfo
+    """
+    Update the label using the new information contained in labinfo
 
 
     Parameters
     ----------
     labinfo : dict
       New label information
-    '''
+    """
 
     self.queries_count += labinfo['queries_count']
     self.uploads_count += labinfo['uploads_count']
@@ -79,13 +80,12 @@ class Label ():
     self.mentions = self.mentions.append(labinfo['mentions'], ignore_index=True)
     self.mentions.sort_values(by=['SCORE'], ascending=False, ignore_index=True, inplace=True)
 
-    self.types = list(self.mentions['TYPE'].unique())
-
+    self.types = self.mentions['TYPE'].unique().tolist()
 
   def show (self):
-    '''
+    """
     Print the label to terminal
-    '''
+    """
 
     parameters = list(self.__init__.__code__.co_varnames)
     parameters.remove('self')

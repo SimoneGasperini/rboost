@@ -9,8 +9,8 @@ from gensim import summarization
 from rboost.cli.rboost import RBoost
 
 
-class Document ():
-  '''
+class Document:
+  """
   Abstract base class for the document object
 
 
@@ -30,7 +30,7 @@ class Document ():
 
     doctype : str
       Document type
-  '''
+  """
 
   def __init__ (self, date, user, path, name, doctype):
 
@@ -40,10 +40,9 @@ class Document ():
     self.name = name
     self.doctype = doctype
 
-
   @staticmethod
   def get_keywords (text, doctype):
-    '''
+    """
     Get the keywords and their score from text according to the RBoost's
     default extraction ratios given by doctype
 
@@ -60,21 +59,20 @@ class Document ():
     -------
     keywords : dict
       Extracted keywords mapped to their score
-    '''
+    """
 
     typing = doctype.split('-')[0]
-    ratio = RBoost._keyword_ratios[typing]
+    ratio = RBoost.keyword_ratios[typing]
 
     raw_kws = summarization.keywords(text, ratio=ratio, scores=True, lemmatize=True, split=True)
 
-    l = nltk.wordnet.WordNetLemmatizer()
-    keywords = {l.lemmatize(word) : round(score,3) for (word, score) in raw_kws}
+    lmt = nltk.wordnet.WordNetLemmatizer()
+    keywords = {lmt.lemmatize(word): round(score, 3) for (word, score) in raw_kws}
 
     return keywords
 
-
   def open_editor (self):
-    '''
+    """
     Open the document using the system's basic text editor
 
 
@@ -82,25 +80,24 @@ class Document ():
     ------
     SystemError
       If the system platform is not supported
-    '''
+    """
 
-    file = self.path + self.name
-    os.chmod(file, S_IWUSR|S_IREAD)
+    filepath = self.path + self.name
+    os.chmod(filepath, S_IWUSR | S_IREAD)
 
     if sys.platform.startswith('win'):
-      os.system('notepad ' + file)
-      os.chmod(file, S_IREAD)
+      os.system('notepad ' + filepath)
+      os.chmod(filepath, S_IREAD)
 
     elif sys.platform.startswith('linux'):
-      os.system('gedit ' + file)
-      os.chmod(file, S_IREAD)
+      os.system('gedit ' + filepath)
+      os.chmod(filepath, S_IREAD)
 
     else:
       raise SystemError('System platform not supported')
 
-
   def get_data_from_text (self, text):
-    '''
+    """
     Get the structured data extracted from text, ready to be used to update
     RBoost's labels network
 
@@ -117,11 +114,11 @@ class Document ():
 
     edges : list of tuple
       Links between labels
-    '''
+    """
 
     docname = self.docname
     doctype = self.doctype
-    labtype = doctype[7:] if doctype.startswith('remark:') else doctype
+    labtype = doctype.split('-')[1] if doctype.startswith('remark-') else doctype
 
     keywords = Document.get_keywords(text=text, doctype=doctype)
 
@@ -139,9 +136,8 @@ class Document ():
 
     return labs, edges
 
-
   def get_data_from_figures (self, figures):
-    '''
+    """
     Get the structured data extracted from figures, ready to be used to
     update RBoost's labels network
 
@@ -158,14 +154,16 @@ class Document ():
 
     edges : list of tuple
       Links between labels
-    '''
+    """
 
-    labs = []; edges = []
+    labs = []
+    edges = []
 
     for fig in figures:
 
       data = fig.get_caption_data()
-      if data is None: continue
+      if data is None:
+        continue
 
       new_labs, new_edges = data
       labs += new_labs

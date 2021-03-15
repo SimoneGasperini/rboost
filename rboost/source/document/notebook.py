@@ -4,11 +4,11 @@ from gensim.parsing.preprocessing import strip_non_alphanum
 
 from rboost.source.document.base import Document
 from rboost.source.document.figure import Figure
-from rboost.utils.exception import RBException
+from rboost.utils.exceptions import Exceptions
 
 
 class Notebook (Document):
-  '''
+  """
   Class for the Notebook object
 
 
@@ -22,7 +22,7 @@ class Notebook (Document):
 
     path : str
       Notebook local path
-  '''
+  """
 
   def __init__ (self, date, user, path):
 
@@ -34,20 +34,18 @@ class Notebook (Document):
                       path=path, name=name,
                       doctype=doctype)
 
-
   @property
   def docname (self):
-    '''
+    """
     Full Notebook name (str)
-    '''
+    """
 
     docname = os.path.basename(self.path[:-1]) + '/' + self.name
 
     return docname
 
-
   def read (self):
-    '''
+    """
     Get all the raw text extracted from the Notebook document
 
 
@@ -55,16 +53,15 @@ class Notebook (Document):
     -------
     text : str
       Extracted raw text
-    '''
+    """
 
     with open(self.path + self.name, mode='r') as file:
       text = file.read()
 
     return text
 
-
   def get_text (self):
-    '''
+    """
     Get the pre-processed text extracted from the Notebook '#TEXT' section
 
 
@@ -72,7 +69,7 @@ class Notebook (Document):
     -------
     text : str
       Extracted text
-    '''
+    """
 
     lines = self.read().splitlines()
     raw_text = ' '.join([line for line in lines[1:lines.index('#FIGURES')]])
@@ -80,9 +77,8 @@ class Notebook (Document):
 
     return text
 
-
   def get_figs_paragraph (self):
-    '''
+    """
     Get the raw text extracted from the Notebook '#FIGURES' section
 
 
@@ -90,16 +86,15 @@ class Notebook (Document):
     -------
     text : str
       Extracted raw text
-    '''
+    """
 
     lines = self.read().splitlines()
     text = '\n'.join([line for line in lines[lines.index('#FIGURES')+1:]])
 
     return text
 
-
   def get_figures (self):
-    '''
+    """
     Get the Figure objects from the Notebook document
 
 
@@ -107,40 +102,37 @@ class Notebook (Document):
     -------
     figures : list of Figure
       Figure objects
-    '''
+    """
 
-    figlines = self.get_figs_paragraph().splitlines()
-    fignames = [line[1:].strip() for line in figlines if line.startswith('-')]
-    captions = self.get_fig_captions(figlines)
+    fig_names = [line[1:].strip()
+                 for line in self.get_figs_paragraph().splitlines()
+                 if line.startswith('-')]
+    fig_captions = self.get_fig_captions()
 
     figures = [Figure(date=self.date, user=self.user, path=self.path, name=name, caption=caption)
-               for name, caption in zip(fignames, captions)]
+               for name, caption in zip(fig_names, fig_captions)]
 
     return figures
 
-
-  def get_fig_captions (self, figlines):
-    '''
+  def get_fig_captions (self):
+    """
     Get the figures captions of the Notebook document
 
-
-    Parameters
-    ----------
-    figlines : list of str
-      Text lines of the '#FIGURES' section
 
     Returns
     -------
     captions : list of str
       Figures captions
-    '''
+    """
 
-    captions = []; cap = ''
+    captions = []
+    cap = ''
 
-    for line in figlines:
+    for line in self.get_figs_paragraph().splitlines():
 
       if line.startswith('-'):
-        if cap is not None: captions.append(cap)
+        if cap is not None:
+          captions.append(cap)
         cap = ''
 
       else:
@@ -153,17 +145,17 @@ class Notebook (Document):
 
     return captions
 
-
   def check_figures (self):
-    '''
+    """
     Check if the Notebook directory contains all the figures files referenced
     in the Notebook document
-    '''
+    """
 
     missing = [fig.name for fig in self.get_figures()
                if fig.name not in os.listdir(self.path)]
 
     if missing:
-      RBException(state='failure',
-                  message='The following files do not exist in the notebook directory:\n\t',
-                  args=missing)
+      e = Exceptions(state='failure',
+                     message='The following files do not exist in the notebook directory:\n\t',
+                     args=missing)
+      e.throw()

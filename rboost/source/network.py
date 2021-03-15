@@ -1,85 +1,49 @@
 import os
 from collections import Counter
+
 import networkx as nx
 import numpy as np
 import pylab as plt
 
-from rboost.cli.rboost import RBoost
 from rboost.source.label import Label
 
 
-class Network ():
-  '''
-  Class for the RBoost's network object
+class Network:
+  """
+  Class for RBoost's labels network
 
 
   Parameters
   ----------
-    graph : networkx.Graph, default=None
-      Graph which represents the RBoost's labels network
-  '''
+  filepath : str
+    Local path to the network pickle file
 
-  def __init__ (self, graph=None):
+  gdrive : gdrive.GDrive
+    RBoost's Google Drive object
+  """
 
-    self.filepath = RBoost._network_pkl
-    self.filename = os.path.basename(self.filepath)
-    self.graph = graph
+  def __init__ (self, filepath, gdrive):
 
+    self.filepath = filepath
+    self.gdrive = gdrive
 
-  def __enter__ (self):
-    '''
-    Enter the context manager downloading the Google Drive network pickle file
-    and reading its content
-
-
-    Returns
-    -------
-    self
-    '''
-
-    RBoost.gdrive.download_file(self.filename)
+    self.gdrive.download_file(filename=os.path.basename(self.filepath))
     self.graph = nx.readwrite.read_gpickle(self.filepath)
-
-    return self
-
-
-  def __exit__ (self, exc_type, exc_value, exc_traceback):
-    '''
-    Exit the context manager uploading the network pickle file to Google Drive
-    '''
-
-    nx.readwrite.write_gpickle(self.graph, self.filepath)
-    RBoost.gdrive.upload_file(self.filepath)
 
     os.remove(self.filepath)
 
+  def push (self):
+    """
+    Write the network pickle file and upload it to Google Drive
+    """
 
-  def get_labels (self, sort=False):
-    '''
-    Get the list of all the labels whitin the network
+    nx.readwrite.write_gpickle(self.graph, self.filepath)
+    self.gdrive.upload_file(self.filepath)
 
-
-    Parameters
-    ----------
-    sort : bool, default=False
-      If True, sort the labels by importance
-
-    Returns
-    -------
-    labels : list of Label
-      Labels in the network
-    '''
-
-    labels = [self.graph.nodes[node]['label'] for node in self.graph.nodes]
-
-    if sort:
-      labels.sort(reverse=True)
-
-    return labels
-
+    os.remove(self.filepath)
 
   def get_kth_neighbors (self, node, k=1):
-    '''
+    """
     Get all the node neighbors up to k-th order
 
 
@@ -95,16 +59,15 @@ class Network ():
     -------
     neighbors : list of str
       Neighbors up to k-th order
-    '''
+    """
 
     nbrs = nx.single_source_shortest_path_length(G=self.graph, source=node, cutoff=k)
     neighbors = list(nbrs.keys())
 
     return neighbors
 
-
   def update_nodes (self, labs):
-    '''
+    """
     Add new nodes to the graph or update already existing graph nodes
     according to the data contained in labs
 
@@ -113,7 +76,7 @@ class Network ():
     ----------
     labs : list of dict
       Labels data
-    '''
+    """
 
     new_nodes = [dic['name'] for dic in labs
                  if dic['name'] not in self.graph.nodes]
@@ -125,9 +88,8 @@ class Network ():
       node = dic['name']
       self.graph.nodes[node]['label'].update(dic)
 
-
   def update_edges (self, links):
-    '''
+    """
     Add new edges to the graph or update already existing graph edges
     according to the data contained in links
 
@@ -136,7 +98,7 @@ class Network ():
     ----------
     links : list of tuple
       Links between labels
-    '''
+    """
 
     new_edges = [link for link in links
                  if link not in self.graph.edges]
@@ -150,17 +112,8 @@ class Network ():
       node1, node2 = edge
       self.graph[node1][node2]['edge_count'] += edges_counter[edge]
 
-
-  def clear (self):
-    '''
-    Clear the network by removing all the graph nodes and edges
-    '''
-
-    self.graph.clear()
-
-
   def compute_node_size (self, nodelist):
-    '''
+    """
     Compute the normalized sizes of the nodes in nodelist according to their
     importance (proportional to the number of queries and uploads of the
     corresponding labels)
@@ -175,7 +128,7 @@ class Network ():
     -------
     node_size : array-like (1D)
       Array of floats representing the nodes sizes
-    '''
+    """
 
     node_size = np.array([self.graph.nodes[n]['label'].queries_count +
                           self.graph.nodes[n]['label'].uploads_count
@@ -184,11 +137,10 @@ class Network ():
 
     return node_size
 
-
   def compute_node_color (self, nodelist):
-    '''
+    """
     Compute the normalized colors (as floating point numbers in [0,1])
-    of the nodes in nodelist according to their degree whitin the network
+    of the nodes in nodelist according to their degree within the network
 
 
     Parameters
@@ -200,7 +152,7 @@ class Network ():
     -------
     node_color : array-like (1D)
       Array of floats representing the nodes colors
-    '''
+    """
 
     node_color = np.array([self.graph.degree[n]
                            for n in nodelist])
@@ -208,42 +160,44 @@ class Network ():
 
     return node_color
 
-
   def show (self, nodelist=None, cmap='rainbow'):
-    '''
+    """
     Show a graphical representation of the network
 
 
     Parameters
     ----------
-    nodelist : list, default=graph.nodes()
+    nodelist : list of str, default=None
       Selected nodes
 
     cmap : str, default='rainbow'
       Nodes color map
-    '''
+    """
 
     if nodelist is None:
       nodelist = self.graph.nodes()
 
-    fig, ax = plt.subplots(figsize=(10,8))
+    fig, ax = plt.subplots(figsize=(10, 8))
 
     graph = self.graph.subgraph(nodes=nodelist)
     pos = nx.drawing.layout.kamada_kawai_layout(graph)
     node_size = self.compute_node_size(nodelist)
     node_color = self.compute_node_color(nodelist)
-    bbox = {'boxstyle':'round', 'ec':'black', 'fc':'white', 'alpha':0.4}
+    bbox = {'boxstyle' : ' round',
+            'ec'       : 'black',
+            'fc'       : 'white',
+            'alpha'    : 0.4}
 
-    params = {'G'           : graph,
-              'pos'         : pos,
-              'ax'          : ax,
-              'nodelist'    : nodelist,
-              'node_size'   : node_size,
-              'node_color'  : node_color,
-              'width'       : 0.2,
-              'cmap'        : cmap,
-              'bbox'        : bbox,
-              'font_size'   : 10,
+    params = {'G'          : graph,
+              'pos'        : pos,
+              'ax'         : ax,
+              'nodelist'   : nodelist,
+              'node_size'  : node_size,
+              'node_color' : node_color,
+              'width'      : 0.2,
+              'cmap'       : cmap,
+              'bbox'       : bbox,
+              'font_size'  : 10,
               }
 
     nx.draw_networkx(**params)
