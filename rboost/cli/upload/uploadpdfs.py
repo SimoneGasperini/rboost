@@ -7,7 +7,7 @@ from rboost.source.document.pdf import PDF
 @RBoost.subcommand ('upload-pdfs')
 class UploadPdfs (RBoost):
   """
-  Upload the pdf documents on RBoost database
+  Upload the pdf documents to RBoost database
   """
 
   def main (self):

@@ -2,6 +2,7 @@ numpy
 matplotlib
 pandas
 networkx
+pdfminer
 pdfminer.six
 colorama
 nltk

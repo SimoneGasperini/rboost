@@ -3,9 +3,10 @@ from collections import Counter
 
 import networkx as nx
 import numpy as np
-import pylab as plt
+from matplotlib import pyplot as plt
 
 from rboost.source.label import Label
+from rboost.utils.exceptions import Exceptions
 
 
 class Network:
@@ -44,7 +45,7 @@ class Network:
 
   def get_kth_neighbors (self, node, k=1):
     """
-    Get all the node neighbors up to k-th order
+    Get all the neighboring nodes of a node up to k-th order
 
 
     Parameters
@@ -58,13 +59,74 @@ class Network:
     Returns
     -------
     neighbors : list of str
-      Neighbors up to k-th order
+      Neighboring nodes
     """
 
     nbrs = nx.single_source_shortest_path_length(G=self.graph, source=node, cutoff=k)
     neighbors = list(nbrs.keys())
 
     return neighbors
+
+  def get_nearest_nodes (self, node, distance):
+    """
+    Get all the nodes within a maximum distance from a node
+
+
+    Parameters
+    ----------
+    node : str
+      Source node
+
+    distance : float
+      Maximum distance
+
+    Returns
+    -------
+    nearest_nodes : list of str
+      Nodes within the distance
+    """
+
+    def euclid_dist (pos, n, m):
+      dist = np.sqrt(np.square(pos[n][0] - pos[m][0]) +
+                     np.square(pos[n][1] - pos[m][1]))
+      return dist
+
+    positions = nx.drawing.layout.kamada_kawai_layout(self.graph)
+    nearest_nodes = [other for other in self.graph.nodes
+                     if euclid_dist(pos=positions, n=node, m=other) <= distance]
+
+    return nearest_nodes
+
+  def get_path (self, source, target):
+    """
+    Get the shortest path between two nodes
+
+
+    Parameters
+    ----------
+    source : str
+      Source node
+
+    target : str
+      Target node
+
+    Returns
+    -------
+    path : list of str
+      All nodes in the path
+    """
+
+    path = None
+
+    try:
+      path = nx.shortest_path(G=self.graph, source=source, target=target)
+
+    except nx.exception.NetworkXNoPath:
+      e = Exceptions(state='failure',
+                     message='Such path was not found in RBoost network')
+      e.throw()
+
+    return path
 
   def update_nodes (self, labs):
     """

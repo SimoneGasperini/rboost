@@ -77,7 +77,9 @@ class PDF (Document):
         for page in tqdm(list(PDFPage.create_pages(document)), ncols=80):
           interpreter.process_page(page)
 
-    except Exceptions(state='warning', message=f'The pdf file "{self.name}" cannot be read') as e:
+    except UnicodeError:
+      e = Exceptions(state='warning',
+                     message=f'The pdf file "{self.name}" cannot be read')
       e.throw()
       return
 

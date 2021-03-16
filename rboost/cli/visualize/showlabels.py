@@ -6,7 +6,7 @@ from rboost.utils.exceptions import Exceptions
 @RBoost.subcommand ('show-labels')
 class ShowLabels (RBoost):
   """
-  Show a set of labels within the RBoost network
+  Show a set of labels within RBoost network
   """
 
   def main (self):
