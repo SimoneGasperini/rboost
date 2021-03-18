@@ -18,14 +18,11 @@ class WriteNotebook (RBoost):
 
     dirname = self.create_directory()
     notebook = self.create_document(dirname)
-    notebook.open_editor()
-
     notebook.check_figures()
-    figures = notebook.get_figures()
 
-    self.upload_files(notebook, figures)
-    self.update_database(notebook, figures)
-    self.update_network(notebook, figures)
+    self.upload_files(notebook)
+    self.update_database(notebook)
+    self.update_network(notebook)
 
     self.database.push()
     self.network.push()
@@ -48,7 +45,7 @@ class WriteNotebook (RBoost):
     else:
       print(f'>>> The notebook "{dirname}" already exists on RBoost database')
 
-    os.makedirs(dirname, exist_ok=True)
+    os.makedirs(self.notebooks_path + dirname, exist_ok=True)
 
     return dirname
 
@@ -64,44 +61,40 @@ class WriteNotebook (RBoost):
     path = self.notebooks_path + dirname + '/'
     notebook = Notebook(date=date, user=author, path=path)
 
-    if notebook.docname in self.docnames_list:
+    if notebook.docname in self.docnames:
       e = Exceptions(state='failure',
                      message=f'The file "{notebook.docname}" already exists on RBoost database')
       e.throw()
 
-    if not os.path.exists(notebook.path + notebook.name):
-      with open(notebook.path + notebook.name, mode='w') as file:
-        file.write('#TEXT\n\n#FIGURES\n\n')
-
     return notebook
 
-  def upload_files (self, notebook, figures):
+  def upload_files (self, notebook):
 
     print(f'>>> Do you want to upload the file "{notebook.docname}" on RBoost database?')
     answer = input('>>> (y/n) ')
     if not answer == 'y':
       sys.exit()
 
-    print(f'>>> Uploading "{notebook.docname}"')
+    print(f'>>> Uploading document "{notebook.docname}"')
 
     folder = notebook.docname.split('/')[0]
     self.gdrive.create_folder(foldername=folder, parent_folder='notebooks')
 
-    filepaths = [notebook.path + notebook.name] + [fig.path + fig.name for fig in figures]
+    filepaths = [notebook.path + notebook.name] + [fig.path + fig.name for fig in notebook.figures]
 
     for filepath in tqdm(filepaths, desc='Uploading files', ncols=80):
       self.gdrive.upload_file(filepath=filepath, parent_folder=folder)
 
-  def update_database (self, notebook, figures):
+  def update_database (self, notebook):
 
-    data = [[fig.date, fig.user, fig.docname, fig.doctype] for fig in figures]
-    data.append([notebook.date, notebook.user, notebook.docname, notebook.doctype])
+    data = [[fig.date, fig.user, fig.docname, fig.doctype, list(fig.keywords.keys())]
+            for fig in notebook.figures]
+    data.append([notebook.date, notebook.user, notebook.docname, notebook.doctype, list(notebook.keywords.keys())])
     self.database.append_data(data)
 
-  def update_network (self, notebook, figures):
+  def update_network (self, notebook):
 
-    text = notebook.get_text()
-    text_labs, text_links = notebook.get_data_from_text(text)
-    figs_labs, figs_links = notebook.get_data_from_figures(figures)
+    text_labs, text_links = notebook.get_data_from_text()
+    figs_labs, figs_links = notebook.get_data_from_figures()
     self.network.update_nodes(text_labs + figs_labs)
     self.network.update_edges(text_links + figs_links)

@@ -1,4 +1,7 @@
 import os
+import sys
+from stat import S_IREAD, S_IWUSR
+
 from gensim.parsing.preprocessing import strip_punctuation
 from gensim.parsing.preprocessing import strip_non_alphanum
 
@@ -29,10 +32,11 @@ class Notebook (Document):
     name = date + '_' + user + '.txt'
     doctype = 'notebook'
 
-    Document.__init__(self,
-                      date=date, user=user,
-                      path=path, name=name,
-                      doctype=doctype)
+    super(Notebook, self).__init__(date=date, user=user,
+                                   path=path, name=name,
+                                   doctype=doctype)
+
+    self.figures = self.get_figures()
 
   @property
   def docname (self):
@@ -43,6 +47,34 @@ class Notebook (Document):
     docname = os.path.basename(self.path[:-1]) + '/' + self.name
 
     return docname
+
+  def open_editor (self):
+    """
+    Open the document using the system's basic text editor
+
+
+    Raises
+    ------
+    SystemError
+      If the system platform is not supported
+    """
+
+    filepath = self.path + self.name
+
+    if not os.path.exists(filepath):
+      with open(filepath, mode='w') as file:
+        file.write('#TEXT\n\n#FIGURES\n\n')
+
+    os.chmod(filepath, S_IWUSR | S_IREAD)
+
+    if sys.platform.startswith('win'):
+      os.system('notepad ' + filepath)
+      os.chmod(filepath, S_IREAD)
+    elif sys.platform.startswith('linux'):
+      os.system('gedit ' + filepath)
+      os.chmod(filepath, S_IREAD)
+    else:
+      raise SystemError('System platform not supported')
 
   def read (self):
     """

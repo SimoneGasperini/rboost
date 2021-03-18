@@ -19,7 +19,7 @@ class FindPath (RBoost):
 
   def get_node (self, msg):
 
-    all_nodes = self.labnames_list
+    all_nodes = self.labnames
     with AutoComplete(options=all_nodes):
       node = input(msg)
 

@@ -38,10 +38,9 @@ class PDF (Document):
 
     doctype = 'standard'
 
-    Document.__init__(self,
-                      date=date, user=user,
-                      path=path, name=name,
-                      doctype=doctype)
+    super(PDF, self).__init__(date=date, user=user,
+                              path=path, name=name,
+                              doctype=doctype)
 
   @property
   def docname (self):
@@ -74,6 +73,8 @@ class PDF (Document):
                                output_string,
                                laparams=LAParams())
         interpreter = PDFPageInterpreter(resource_manager, device)
+
+        print(f'>>> Reading document "{self.name}"')
         for page in tqdm(list(PDFPage.create_pages(document)), ncols=80):
           interpreter.process_page(page)
 
@@ -87,21 +88,3 @@ class PDF (Document):
     text = strip_non_alphanum(strip_punctuation(text.lower()))
 
     return text
-
-  def open_editor (self):
-    """
-    Raises
-    ------
-    NotImplementedError
-    """
-
-    raise NotImplementedError
-
-  def get_data_from_figures (self, figures):
-    """
-    Raises
-    ------
-    NotImplementedError
-    """
-
-    raise NotImplementedError

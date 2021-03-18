@@ -20,12 +20,12 @@ class Download (RBoost):
 
     pdfs = self.gdrive.list_folder(foldername='pdfs', field='title')
     notebooks = self.gdrive.list_folder(foldername='notebooks', field='title')
-    docs_list = pdfs + notebooks
+    documents = pdfs + notebooks
 
-    with AutoComplete(options=docs_list):
+    with AutoComplete(options=documents):
       docname = input('>>> Document name :\n>>> ')
 
-    if docname not in docs_list:
+    if docname not in documents:
       e = Exceptions(state='failure',
                      message=f'The document "{docname}" does not exist in RBoost database')
       e.throw()

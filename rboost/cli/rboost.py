@@ -25,7 +25,7 @@ class RBoost (cli.Application):
   notebooks_path = PATH + 'My_Documents/notebooks/'
   remarks_path   = PATH + 'My_Documents/remarks/'
 
-  dataframe_columns    = ['DATE', 'USER/AUTHOR', 'DOCNAME', 'DOCTYPE']
+  dataframe_columns    = ['DATE', 'USER/AUTHOR', 'DOCNAME', 'DOCTYPE', 'KEYWORDS']
   google_drive_folders = ['pdfs', 'notebooks']
 
   gdrive = GDrive(client_secrets_file  = PATH + 'client_secrets.json',
@@ -39,8 +39,8 @@ class RBoost (cli.Application):
                     gdrive=gdrive)
 
   keyword_ratios = {'standard': 0.02,
-                    'notebook': 0.2,
-                    'caption': 0.6,
+                    'notebook': 0.4,
+                    'figure': 0.9,
                     'remark': 0.6}
 
   def main (self):
@@ -56,43 +56,41 @@ class RBoost (cli.Application):
     return today_date
 
   @property
-  def users_list (self):
+  def users (self):
 
-    users_list = self.database.dataframe['USER/AUTHOR'].unique().tolist()
+    users = set(self.database.dataframe['USER/AUTHOR'])
 
-    return users_list
-
-  @property
-  def docnames_list (self):
-
-    docnames_list = self.database.dataframe['DOCNAME'].tolist()
-
-    return docnames_list
+    return users
 
   @property
-  def doctypes_list (self):
+  def docnames (self):
 
-    doctypes_list = self.database.dataframe['DOCTYPE'].unique().tolist()
+    docnames = set(self.database.dataframe['DOCNAME'])
 
-    return doctypes_list
-
-  @property
-  def labnames_list (self):
-
-    labnames_list = list(self.network.graph)
-
-    return labnames_list
+    return docnames
 
   @property
-  def labtypes_list (self):
+  def doctypes (self):
 
-    labtypes_list = []
-    for node in self.network.graph.nodes:
-      labtypes_list += self.network.graph.nodes[node]['label'].types
+    doctypes = set(self.database.dataframe['DOCTYPE'])
 
-    labtypes_list = list(set(labtypes_list))
+    return doctypes
 
-    return labtypes_list
+  @property
+  def labnames (self):
+
+    labnames = set(self.network.graph)
+
+    return labnames
+
+  @property
+  def labtypes (self):
+
+    labtypes_list = [self.network.graph.nodes[node]['label'].types
+                     for node in self.network.graph.nodes]
+    labtypes = set().union(*labtypes_list)
+
+    return labtypes
 
   def get_date (self, auto=False):
 
@@ -105,12 +103,11 @@ class RBoost (cli.Application):
 
   def get_user (self):
 
-    users_list = self.users_list
-
-    with AutoComplete(options=users_list):
+    users = self.users
+    with AutoComplete(options=users):
       user = input('>>> User/author (name-surname) : ')
 
-    if user not in users_list:
+    if user not in users:
       print(f'>>> The user "{user}" does not exist yet on RBoost, do you want to create it?')
       answer = input('>>> (y/n) ')
       if not answer == 'y':

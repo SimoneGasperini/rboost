@@ -37,4 +37,4 @@ class ListDocuments (RBoost):
     if self._doctype is not None:
       df = df.loc[df['DOCTYPE'] == self._doctype]
 
-    self.show_dataframe(df=df, full=True)
+    self.show_dataframe(df=df, full=False)

@@ -1,4 +1,5 @@
 import os
+import sys
 from stat import S_IREAD, S_IWUSR
 
 from gensim.parsing.preprocessing import strip_punctuation
@@ -14,6 +15,12 @@ class Remark (Document):
 
   Parameters
   ----------
+    date : str, default=None
+      Remark date (dd-mm-yyyy)
+
+    user : str, default=None
+      Remark author (name-surname)
+
     path : str
       Remark local path
 
@@ -22,23 +29,16 @@ class Remark (Document):
 
     special : str
       Remark special type
-
-    date : str, default=None
-      Remark date (dd-mm-yyyy)
-
-    user : str, default=None
-      Remark author (name-surname)
   """
 
-  def __init__ (self, path, name, special, date=None, user=None):
+  def __init__ (self, date, user, path, name, special):
 
     doctype = 'remark-' + special
     name = doctype + '_' + name + '.txt'
 
-    Document.__init__(self,
-                      date=date, user=user,
-                      path=path, name=name,
-                      doctype=doctype)
+    super(Remark, self).__init__(date=date, user=user,
+                                 path=path, name=name,
+                                 doctype=doctype)
 
   @property
   def docname (self):
@@ -49,6 +49,34 @@ class Remark (Document):
     docname = os.path.basename(self.path[:-1]) + '/' + self.name
 
     return docname
+
+  def open_editor (self):
+    """
+    Open the document using the system's basic text editor
+
+
+    Raises
+    ------
+    SystemError
+      If the system platform is not supported
+    """
+
+    filepath = self.path + self.name
+
+    if not os.path.exists(filepath):
+      open(filepath, mode='w').close()
+    self.write_date_and_user()
+
+    os.chmod(filepath, S_IWUSR | S_IREAD)
+
+    if sys.platform.startswith('win'):
+      os.system('notepad ' + filepath)
+      os.chmod(filepath, S_IREAD)
+    elif sys.platform.startswith('linux'):
+      os.system('gedit ' + filepath)
+      os.chmod(filepath, S_IREAD)
+    else:
+      raise SystemError('System platform not supported')
 
   def get_text (self):
     """
@@ -67,15 +95,6 @@ class Remark (Document):
     text = strip_non_alphanum(strip_punctuation(raw_text.lower()))
 
     return text
-
-  def get_data_from_figures (self, figures):
-    """
-    Raises
-    ------
-    NotImplementedError
-    """
-
-    raise NotImplementedError
 
   def write_date_and_user (self):
     """

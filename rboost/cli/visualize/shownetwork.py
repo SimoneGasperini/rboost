@@ -35,7 +35,7 @@ class ShowNetwork (RBoost):
 
   def get_nodelist (self):
 
-    nodelist = self.labnames_list
+    nodelist = self.labnames
 
     if self._labtype is not None:
       nodelist = self.filter_by_type(nodelist)

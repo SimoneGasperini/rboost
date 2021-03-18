@@ -18,7 +18,7 @@ class ShowLabels (RBoost):
 
     number = int(input('>>> Number of labels : '))
     order = int(input('>>> Neighbors order : '))
-    all_nodes = self.labnames_list
+    all_nodes = self.labnames
     nodelist = []
 
     for i in range(number):

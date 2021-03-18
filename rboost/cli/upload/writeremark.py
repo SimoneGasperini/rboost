@@ -17,7 +17,6 @@ class WriteRemark (RBoost):
 
     reference = self.get_reference()
     remark = self.create_document(reference)
-    remark.open_editor()
 
     self.upload_file(remark)
     self.update_database(remark)
@@ -30,12 +29,12 @@ class WriteRemark (RBoost):
 
     df = self.database.dataframe
     df = df.loc[df['DOCTYPE'].isin(['standard', 'notebook'])]
-    docs_list = list(set([docname.split('/')[0].split('.')[0] for docname in df['DOCNAME']]))
+    documents = set([docname.split('/')[0].split('.')[0] for docname in df['DOCNAME']])
 
-    with AutoComplete(options=docs_list):
+    with AutoComplete(options=documents):
       reference = input('>>> Reference document :\n>>> ')
 
-    if reference not in docs_list:
+    if reference not in documents:
       e = Exceptions(state='failure',
                      message=f'The document "{reference}" does not exist in RBoost database')
       e.throw()
@@ -49,20 +48,14 @@ class WriteRemark (RBoost):
 
     special = input('>>> Remark type : ')
     name = input('>>> Remark name : ')
-    remark = Remark(path=path, name=name, special=special)
+    date = self.get_date()
+    user = self.get_user()
+    remark = Remark(date=date, user=user, path=path, name=name, special=special)
 
-    if remark.docname in self.docnames_list:
+    if remark.docname in self.docnames:
       e = Exceptions(state='failure',
                      message=f'The file "{remark.docname}" already exists on RBoost database')
       e.throw()
-
-    if not os.path.exists(remark.path + remark.name):
-      with open(remark.path + remark.name, mode='w') as file:
-        file.write('#\n\n')
-
-    remark.date = self.get_date()
-    remark.user = self.get_user()
-    remark.write_date_and_user()
 
     return remark
 
@@ -81,12 +74,11 @@ class WriteRemark (RBoost):
 
   def update_database (self, remark):
 
-    data = [[remark.date, remark.user, remark.docname, remark.doctype]]
+    data = [[remark.date, remark.user, remark.docname, remark.doctype, list(remark.keywords.keys())]]
     self.database.append_data(data)
 
   def update_network (self, remark):
 
-    text = remark.get_text()
-    labs, links = remark.get_data_from_text(text)
+    labs, links = remark.get_data_from_text()
     self.network.update_nodes(labs)
     self.network.update_edges(links)
