@@ -1,8 +1,8 @@
 from rboost.cli.rboost import RBoost
 
 from rboost.cli.welcome import Welcome
-
 from rboost.cli.download import Download
+from rboost.cli.search import Search
 
 from rboost.cli.upload.uploadpdfs import UploadPdfs
 from rboost.cli.upload.writenotebook import WriteNotebook
