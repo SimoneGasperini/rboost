@@ -32,7 +32,8 @@ class GDrive:
     if gauth.credentials is None:
       gauth.LocalWebserverAuth()
     elif gauth.access_token_expired:
-      gauth.Refresh()
+      os.remove(credentials_file)
+      gauth.LocalWebserverAuth()
     else:
       gauth.Authorize()
 

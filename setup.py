@@ -10,9 +10,7 @@ import nltk
 
 RBOOST_DATA_PATH = os.path.expanduser('~/Desktop/RBoost_Data/').replace('\\', '/')
 CLIENT_SECRETS   = './client_secrets.json'
-CREDENTIALS      = './credentials.txt'
 REQUIREMENTS     = './requirements.txt'
-
 
 directories = ['My_Documents/pdfs',
                'My_Documents/notebooks',
@@ -21,13 +19,9 @@ directories = ['My_Documents/pdfs',
 for directory in directories:
   os.makedirs(RBOOST_DATA_PATH + directory, exist_ok=True)
 
-
 copy(src=CLIENT_SECRETS, dst=RBOOST_DATA_PATH)
-copy(src=CREDENTIALS, dst=RBOOST_DATA_PATH)
-
 
 nltk.download('wordnet')
-
 
 with open(REQUIREMENTS, 'r') as file:
   requirements = file.read().splitlines()
