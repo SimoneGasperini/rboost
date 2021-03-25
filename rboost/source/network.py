@@ -1,12 +1,13 @@
 import os
+import math
 from collections import Counter
 
 import networkx as nx
-import numpy as np
-from matplotlib import pyplot as plt
+import pyvis
 
 from rboost.source.label import Label
 from rboost.utils.exceptions import Exceptions
+from rboost.utils.colormapper import ColorMapper
 
 
 class Network:
@@ -87,9 +88,7 @@ class Network:
     """
 
     def euclid_dist (pos, n, m):
-      dist = np.sqrt(np.square(pos[n][0] - pos[m][0]) +
-                     np.square(pos[n][1] - pos[m][1]))
-      return dist
+      return math.sqrt((pos[n][0] - pos[m][0])**2 + (pos[n][1] - pos[m][1])**2)
 
     positions = nx.drawing.layout.kamada_kawai_layout(self.graph)
     nearest_nodes = [other for other in self.graph.nodes
@@ -174,11 +173,11 @@ class Network:
       node1, node2 = edge
       self.graph[node1][node2]['edge_count'] += edges_counter[edge]
 
-  def compute_node_size (self, nodelist):
+  def compute_nodes_size (self, nodelist, scale):
     """
-    Compute the normalized sizes of the nodes in nodelist according to their
+    Compute the scaled size of each node in nodelist according to their
     importance (proportional to the number of queries and uploads of the
-    corresponding labels)
+    corresponding label)
 
 
     Parameters
@@ -186,23 +185,26 @@ class Network:
     nodelist : list of str
       Selected nodes
 
+    scale : float
+      Nodes size scaling factor
+
     Returns
     -------
-    node_size : array-like (1D)
-      Array of floats representing the nodes sizes
+    nodes_size : list of float
+      Numbers representing the nodes size
     """
 
-    node_size = np.array([self.graph.nodes[n]['label'].queries_count +
-                          self.graph.nodes[n]['label'].uploads_count
-                          for n in nodelist])
-    node_size = ((1. / np.sum(node_size)) * node_size) * 3e4
+    counts = [self.graph.nodes[n]['label'].queries_count + self.graph.nodes[n]['label'].uploads_count
+              for n in nodelist]
+    norm = 1. / sum(counts)
+    nodes_size = [count*norm*scale for count in counts]
 
-    return node_size
+    return nodes_size
 
-  def compute_node_color (self, nodelist):
+  def compute_nodes_color (self, nodelist, cmap):
     """
-    Compute the normalized colors (as floating point numbers in [0,1])
-    of the nodes in nodelist according to their degree within the network
+    Compute the normalized color (in html hexadecimal format) of each
+    node in nodelist according to their degree within the network
 
 
     Parameters
@@ -210,27 +212,39 @@ class Network:
     nodelist : list of str
       Selected nodes
 
+    cmap : str, default='rainbow'
+      Nodes color map
+
     Returns
     -------
-    node_color : array-like (1D)
-      Array of floats representing the nodes colors
+    nodes_color : list of str
+      Colors in html hexadecimal format
     """
 
-    node_color = np.array([self.graph.degree[n]
-                           for n in nodelist])
-    node_color = (1. / np.sum(node_color)) * node_color
+    degrees = [self.graph.degree[n] for n in nodelist]
+    norm = 1. / max(degrees)
 
-    return node_color
+    cmapper = ColorMapper(cmap_name=cmap)
+    nodes_color = [cmapper.float2hex(deg*norm) for deg in degrees]
 
-  def show (self, nodelist=None, cmap='rainbow'):
+    return nodes_color
+
+  def show (self, filepath, nodelist=None, scale=400., cmap='rainbow'):
     """
-    Show a graphical representation of the network
+    Show an interactive graphical representation of the network containing
+    the selected nodes and save the output in the specified file
 
 
     Parameters
     ----------
+    filepath : str
+      Path and name of the output html file
+
     nodelist : list of str, default=None
       Selected nodes
+
+    scale : float, default=800.
+      Nodes size scaling factor
 
     cmap : str, default='rainbow'
       Nodes color map
@@ -238,32 +252,20 @@ class Network:
 
     if nodelist is None:
       nodelist = self.graph.nodes()
-
-    fig, ax = plt.subplots(figsize=(10, 8))
-
     graph = self.graph.subgraph(nodes=nodelist)
-    pos = nx.drawing.layout.kamada_kawai_layout(graph)
-    node_size = self.compute_node_size(nodelist)
-    node_color = self.compute_node_color(nodelist)
-    bbox = {'boxstyle' : ' round',
-            'ec'       : 'black',
-            'fc'       : 'white',
-            'alpha'    : 0.4}
 
-    params = {'G'          : graph,
-              'pos'        : pos,
-              'ax'         : ax,
-              'nodelist'   : nodelist,
-              'node_size'  : node_size,
-              'node_color' : node_color,
-              'width'      : 0.2,
-              'cmap'       : cmap,
-              'bbox'       : bbox,
-              'font_size'  : 10,
-              }
+    nodes_size = self.compute_nodes_size(nodelist, scale=scale)
+    nodes_color = self.compute_nodes_color(nodelist, cmap=cmap)
 
-    nx.draw_networkx(**params)
+    net = pyvis.network.Network(height='700px', width='1400px')
 
-    fig.tight_layout()
-    plt.axis('off')
-    plt.show()
+    node_ids = {}
+    for n_id, node, size, color in zip(range(len(nodelist)), nodelist, nodes_size, nodes_color):
+      info = graph.nodes[node].pop('label').to_html()
+      net.add_node(n_id=n_id, label=node, title=info, size=size, color=color)
+      node_ids[node] = n_id
+
+    for n1, n2 in graph.edges():
+      net.add_edge(source=node_ids[n1], to=node_ids[n2], color='black', width=0.02)
+
+    net.show(name=filepath)

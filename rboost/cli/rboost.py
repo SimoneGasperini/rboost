@@ -24,13 +24,14 @@ class RBoost (cli.Application):
   pdfs_path      = PATH + 'My_Documents/pdfs/'
   notebooks_path = PATH + 'My_Documents/notebooks/'
   remarks_path   = PATH + 'My_Documents/remarks/'
+  downloads_path = PATH + 'My_Downloads/'
 
   dataframe_columns    = ['DATE', 'USER/AUTHOR', 'DOCNAME', 'DOCTYPE', 'KEYWORDS']
   google_drive_folders = ['pdfs', 'notebooks']
 
   gdrive = GDrive(client_secrets_file  = PATH + 'client_secrets.json',
                   credentials_file     = PATH + 'credentials.txt',
-                  downloads_path       = PATH + 'My_Downloads/')
+                  downloads_path       = downloads_path)
 
   database = Database(filepath = PATH + 'My_Downloads/database.pkl',
                       gdrive   = gdrive)

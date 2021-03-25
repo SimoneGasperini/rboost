@@ -15,7 +15,10 @@ class LocLabel (RBoost):
     distance = float(input('>>> Maximum distance : '))
 
     nodelist = self.network.get_nearest_nodes(node=node, distance=distance)
-    self.network.show(nodelist=nodelist)
+    filepath = self.downloads_path + 'RBoost_labels.html'
+
+    self.network.show(filepath=filepath, nodelist=nodelist)
+    print('>>> Html file successfully downloaded to "RBoost_Data/My_Downloads"')
 
   def get_node (self):
 

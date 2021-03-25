@@ -1,4 +1,3 @@
-numpy
 matplotlib
 pandas
 networkx
@@ -9,6 +8,7 @@ nltk
 gensim
 tqdm
 pydrive
+pyvis
 plumbum
 sphinx
 sphinx-rtd-theme

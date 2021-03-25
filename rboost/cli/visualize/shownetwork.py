@@ -31,7 +31,10 @@ class ShowNetwork (RBoost):
   def main (self):
 
     nodelist = self.get_nodelist()
-    self.network.show(nodelist=nodelist)
+    filepath = self.downloads_path + 'RBoost_network.html'
+
+    self.network.show(filepath=filepath, nodelist=nodelist)
+    print('>>> Html file successfully downloaded to "RBoost_Data/My_Downloads"')
 
   def get_nodelist (self):
 

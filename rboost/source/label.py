@@ -63,6 +63,22 @@ class Label:
 
     return less_than
 
+  def __repr__ (self):
+
+    string = self.name.upper() + '\n' +\
+             f'\n\nTypes -> {self.types}' +\
+             f'\nQueries -> {self.queries_count}' +\
+             f'\nUploads -> {self.uploads_count}'
+
+    return string
+
+  def to_html (self):
+
+    string = self.__repr__()
+    html = '<p>' + string.replace('\n', '<br>') + '</p>'
+
+    return html
+
   def update (self, labinfo):
     """
     Update the label using the new information contained in labinfo
