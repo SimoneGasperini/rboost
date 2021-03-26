@@ -8,30 +8,29 @@ class Label:
 
   Parameters
   ----------
-    name : str
-      Label name
+  name : str
+    Label name
 
-    types : list, default=[]
-      All the label types
+  types : list, default=[]
+    All the label types
 
-    queries_count : int, default=0
-      Number of times the label occurred in a query
+  queries_count : int, default=0
+    Number of times the label occurred in a query
 
-    uploads_count : int, default=0
-      Number of times the label occurred in a uploaded document
+  uploads_count : int, default=0
+    Number of times the label occurred in a uploaded document
 
-    mentions : pandas.DataFrame, default=pandas.DataFrame(columns=['DOCNAME','TYPE','SCORE']))
-      Table to store the important mentions of the label in the uploaded
-      documents, together with their type and their score
+  mentions : pandas.DataFrame, default=pandas.DataFrame(columns=['DOCNAME','TYPE','SCORE']))
+    Table to store the important mentions of the label in the uploaded
+    documents, together with their type and their score
   """
 
-  def __init__ (self,
-                name,
-                types         = None,
-                queries_count = 0,
-                uploads_count = 0,
-                mentions      = pd.DataFrame(columns=['DOCNAME', 'TYPE', 'SCORE'])):
-
+  def __init__(self,
+               name,
+               types=None,
+               queries_count=0,
+               uploads_count=0,
+               mentions=pd.DataFrame(columns=['DOCNAME', 'TYPE', 'SCORE'])):
     self.name = name
 
     if types is None:
@@ -41,9 +40,9 @@ class Label:
     self.uploads_count = uploads_count
     self.mentions = mentions
 
-  def __lt__ (self, other):
+  def __lt__(self, other):
     """
-    Compare the importance of two labels
+    Operator to compare two different labels by relevance
 
 
     Parameters
@@ -63,7 +62,16 @@ class Label:
 
     return less_than
 
-  def __repr__ (self):
+  def __repr__(self):
+    """
+    Label object representation
+
+
+    Returns
+    -------
+    string : str
+      Representation
+    """
 
     string = self.name.upper() + '\n' +\
              f'\n\nTypes -> {self.types}' +\
@@ -72,14 +80,23 @@ class Label:
 
     return string
 
-  def to_html (self):
+  def to_html(self):
+    """
+    Get the label string representation in html format
+
+
+    Returns
+    -------
+    html : str
+      Html representation
+    """
 
     string = self.__repr__()
     html = '<p>' + string.replace('\n', '<br>') + '</p>'
 
     return html
 
-  def update (self, labinfo):
+  def update(self, labinfo):
     """
     Update the label using the new information contained in labinfo
 
@@ -98,7 +115,7 @@ class Label:
 
     self.types = self.mentions['TYPE'].unique().tolist()
 
-  def show (self):
+  def show(self):
     """
     Print the label to terminal
     """

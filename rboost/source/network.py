@@ -6,6 +6,7 @@ import networkx as nx
 import pyvis
 
 from rboost.source.label import Label
+from rboost.source.link import Link
 from rboost.utils.exceptions import Exceptions
 from rboost.utils.colormapper import ColorMapper
 
@@ -259,13 +260,18 @@ class Network:
 
     net = pyvis.network.Network(height='700px', width='1400px')
 
+    labels = {}
     node_ids = {}
     for n_id, node, size, color in zip(range(len(nodelist)), nodelist, nodes_size, nodes_color):
-      info = graph.nodes[node].pop('label').to_html()
-      net.add_node(n_id=n_id, label=node, title=info, size=size, color=color)
+      label = graph.nodes[node].pop('label')
+      net.add_node(n_id=n_id, label=node,
+                   title=label.to_html(), size=size, color=color)
+      labels[node] = label
       node_ids[node] = n_id
 
-    for n1, n2 in graph.edges():
-      net.add_edge(source=node_ids[n1], to=node_ids[n2], color='black', width=0.02)
+    for node1, node2 in graph.edges():
+      link = Link(node1=node1, node2=node2, labels=labels)
+      net.add_edge(source=node_ids[node1], to=node_ids[node2],
+                   title=link.to_html(), width=0.03, color='black')
 
     net.show(name=filepath)
