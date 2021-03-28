@@ -37,7 +37,7 @@ class RBoost (cli.Application):
                       gdrive   = gdrive)
 
   network = Network(filepath = PATH + 'My_Downloads/network.pkl',
-                    gdrive=gdrive)
+                    gdrive   = gdrive)
 
   keyword_ratios = {'standard': 0.02,
                     'notebook': 0.4,
@@ -47,7 +47,7 @@ class RBoost (cli.Application):
   def main (self):
 
     if not self.nested_command:
-      os.system('rboost --help')
+      self.help()
 
   @property
   def today_date (self):

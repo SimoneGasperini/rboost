@@ -27,17 +27,17 @@ class GDrive:
 
     GoogleAuth.DEFAULT_SETTINGS['client_config_file'] = client_secrets_file
     gauth = GoogleAuth()
-    gauth.LoadCredentialsFile(credentials_file)
 
-    if gauth.credentials is None:
-      gauth.LocalWebserverAuth()
-    elif gauth.access_token_expired:
-      os.remove(credentials_file)
-      gauth.LocalWebserverAuth()
+    if os.path.exists(credentials_file):
+      gauth.LoadCredentialsFile(credentials_file)
+      if gauth.credentials is None or gauth.access_token_expired:
+        gauth.LocalWebserverAuth()
+        gauth.SaveCredentialsFile(credentials_file)
     else:
-      gauth.Authorize()
+      gauth.LocalWebserverAuth()
+      gauth.SaveCredentialsFile(credentials_file)
 
-    gauth.SaveCredentialsFile(credentials_file)
+    gauth.Authorize()
 
     self.service = GoogleDrive(gauth)
     self.downloads_path = downloads_path

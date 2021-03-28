@@ -197,7 +197,7 @@ class Network:
 
     counts = [self.graph.nodes[n]['label'].queries_count + self.graph.nodes[n]['label'].uploads_count
               for n in nodelist]
-    norm = 1. / sum(counts)
+    norm = 1. / max(counts)
     nodes_size = [count*norm*scale for count in counts]
 
     return nodes_size
@@ -230,7 +230,7 @@ class Network:
 
     return nodes_color
 
-  def show (self, filepath, nodelist=None, scale=400., cmap='rainbow'):
+  def show (self, filepath, nodelist=None, scale=15., cmap='rainbow'):
     """
     Show an interactive graphical representation of the network containing
     the selected nodes and save the output in the specified file
@@ -255,16 +255,17 @@ class Network:
       nodelist = self.graph.nodes()
     graph = self.graph.subgraph(nodes=nodelist)
 
+    pos = nx.drawing.layout.kamada_kawai_layout(graph)
     nodes_size = self.compute_nodes_size(nodelist, scale=scale)
     nodes_color = self.compute_nodes_color(nodelist, cmap=cmap)
 
-    net = pyvis.network.Network(height='700px', width='1400px')
+    net = pyvis.network.Network(height='100%', width='100%')
 
     labels = {}
     node_ids = {}
     for n_id, node, size, color in zip(range(len(nodelist)), nodelist, nodes_size, nodes_color):
       label = graph.nodes[node].pop('label')
-      net.add_node(n_id=n_id, label=node,
+      net.add_node(n_id=n_id, label=node, x=pos[node][0]*500, y=pos[node][1]*500,
                    title=label.to_html(), size=size, color=color)
       labels[node] = label
       node_ids[node] = n_id
@@ -272,6 +273,7 @@ class Network:
     for node1, node2 in graph.edges():
       link = Link(node1=node1, node2=node2, labels=labels)
       net.add_edge(source=node_ids[node1], to=node_ids[node2],
-                   title=link.to_html(), width=0.03, color='black')
+                   title=link.to_html(), width=0.001, color='black')
 
+    net.toggle_physics(False)
     net.show(name=filepath)

@@ -34,9 +34,9 @@ class Link:
       Representation
     """
 
-    string = f'CONNECTIONS {self.node1}--{self.node2}\n\n'
+    string = f'{self.node1.upper()}<-->{self.node2.upper()}\n\n'
     for mention in self.mentions:
-      string += f'_{mention}\n'
+      string += f'- {mention}\n'
 
     return string
 
