@@ -5,7 +5,7 @@ pdfminer
 pdfminer.six
 colorama
 nltk
-gensim
+gensim==3.8.3
 tqdm
 pydrive
 pyvis
