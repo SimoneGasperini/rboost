@@ -51,12 +51,6 @@ class Notebook (Document):
   def open_editor (self):
     """
     Open the document using the system's basic text editor
-
-
-    Raises
-    ------
-    SystemError
-      If the system platform is not supported
     """
 
     filepath = self.path + self.name
@@ -69,12 +63,12 @@ class Notebook (Document):
 
     if sys.platform.startswith('win'):
       os.system('notepad ' + filepath)
-      os.chmod(filepath, S_IREAD)
-    elif sys.platform.startswith('linux'):
+    if sys.platform.startswith('linux'):
       os.system('gedit ' + filepath)
-      os.chmod(filepath, S_IREAD)
-    else:
-      raise SystemError('System platform not supported')
+    if sys.platform.startswith('darwin'):
+      os.system('open -a TextEdit ' + filepath)
+
+    os.chmod(filepath, S_IREAD)
 
   def read (self):
     """
