@@ -1,12 +1,12 @@
 from rboost.cli.rboost import RBoost
 
 
-@RBoost.subcommand ('welcome')
+@RBoost.subcommand('welcome')
 class Welcome (RBoost):
-  """
-  Welcome to RBoost software
-  """
+    """
+    Welcome to RBoost software
+    """
 
-  def main (self):
+    def main(self):
 
-    print('Welcome to RBoost!')
+        print('Welcome to RBoost!')

@@ -3,63 +3,64 @@ from plumbum import cli
 from rboost.cli.rboost import RBoost
 
 
-@RBoost.subcommand ('show-network')
+@RBoost.subcommand('show-network')
 class ShowNetwork (RBoost):
-  """
-  Show the RBoost network
-  """
-
-  _labtype = None
-  _number = None
-
-  @cli.switch ('--labtype', str)
-  def labtype (self, labtype):
     """
-    Selects labels with the specified type
+    Show the RBoost network
     """
 
-    self._labtype = labtype
+    _labtype = None
+    _number = None
 
-  @cli.switch ('--number', int)
-  def number (self, number):
-    """
-    Selects a fixed number of labels
-    """
+    @cli.switch('--labtype', str)
+    def labtype(self, labtype):
+        """
+        Selects labels with the specified type
+        """
 
-    self._number = number
+        self._labtype = labtype
 
-  def main (self):
+    @cli.switch('--number', int)
+    def number(self, number):
+        """
+        Selects a fixed number of labels
+        """
 
-    nodelist = self.get_nodelist()
-    filepath = self.downloads_path + 'RBoost_network.html'
+        self._number = number
 
-    self.network.show(filepath=filepath, nodelist=nodelist)
-    print('>>> Html file successfully downloaded to "RBoost_Data/My_Downloads"')
+    def main(self):
 
-  def get_nodelist (self):
+        nodelist = self.get_nodelist()
+        filepath = self.downloads_path + 'RBoost_network.html'
 
-    nodelist = self.labnames
+        self.network.show(filepath=filepath, nodelist=nodelist)
+        print('>>> Html file successfully downloaded to "RBoost_Data/My_Downloads"')
 
-    if self._labtype is not None:
-      nodelist = self.filter_by_type(nodelist)
+    def get_nodelist(self):
 
-    if self._number is not None:
-      nodelist = self.select_number(nodelist)
+        nodelist = self.labnames
 
-    return nodelist
+        if self._labtype is not None:
+            nodelist = self.filter_by_type(nodelist)
 
-  def filter_by_type (self, nodelist):
+        if self._number is not None:
+            nodelist = self.select_number(nodelist)
 
-    nodelist = [self.network.graph.nodes[n]['label'].name for n in nodelist
-                if self._labtype in self.network.graph.nodes[n]['label'].types]
+        return nodelist
 
-    return nodelist
+    def filter_by_type(self, nodelist):
 
-  def select_number (self, nodelist):
+        nodelist = [self.network.graph.nodes[n]['label'].name for n in nodelist
+                    if self._labtype in self.network.graph.nodes[n]['label'].types]
 
-    if len(nodelist) > self._number:
+        return nodelist
 
-      labels = sorted([self.network.graph.nodes[n]['label'] for n in nodelist], reverse=True)
-      nodelist = [lab.name for lab in labels[:self._number]]
+    def select_number(self, nodelist):
 
-    return nodelist
+        if len(nodelist) > self._number:
+
+            labels = sorted([self.network.graph.nodes[n]['label']
+                            for n in nodelist], reverse=True)
+            nodelist = [lab.name for lab in labels[:self._number]]
+
+        return nodelist

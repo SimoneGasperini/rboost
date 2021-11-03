@@ -2,39 +2,39 @@ from plumbum import cli
 from rboost.cli.rboost import RBoost
 
 
-@RBoost.subcommand ('list-documents')
+@RBoost.subcommand('list-documents')
 class ListDocuments (RBoost):
-  """
-  List the documents in RBoost database
-  """
-
-  _user = None
-  _doctype = None
-
-  @cli.switch ('--user', str)
-  def user (self, user):
     """
-    Selects documents with the specified user/author
+    List the documents in RBoost database
     """
 
-    self._user = user
+    _user = None
+    _doctype = None
 
-  @cli.switch ('--doctype', str)
-  def doctype (self, doctype):
-    """
-    Selects documents with the specified type
-    """
+    @cli.switch('--user', str)
+    def user(self, user):
+        """
+        Selects documents with the specified user/author
+        """
 
-    self._doctype = doctype
+        self._user = user
 
-  def main (self):
+    @cli.switch('--doctype', str)
+    def doctype(self, doctype):
+        """
+        Selects documents with the specified type
+        """
 
-    df = self.database.dataframe
+        self._doctype = doctype
 
-    if self._user is not None:
-      df = df.loc[df['USER/AUTHOR'] == self._user]
+    def main(self):
 
-    if self._doctype is not None:
-      df = df.loc[df['DOCTYPE'] == self._doctype]
+        df = self.database.dataframe
 
-    self.show_dataframe(df=df, full=False)
+        if self._user is not None:
+            df = df.loc[df['USER/AUTHOR'] == self._user]
+
+        if self._doctype is not None:
+            df = df.loc[df['DOCTYPE'] == self._doctype]
+
+        self.show_dataframe(df=df, full=False)

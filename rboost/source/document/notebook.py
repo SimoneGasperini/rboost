@@ -11,177 +11,178 @@ from rboost.utils.exceptions import Exceptions
 
 
 class Notebook (Document):
-  """
-  Class for the Notebook object
-
-
-  Parameters
-  ----------
-    date : str
-      Notebook date (dd-mm-yyyy)
-
-    user : str
-      Notebook author (name-surname)
-
-    path : str
-      Notebook local path
-  """
-
-  def __init__ (self, date, user, path):
-
-    name = date + '_' + user + '.txt'
-    doctype = 'notebook'
-
-    super(Notebook, self).__init__(date=date, user=user,
-                                   path=path, name=name,
-                                   doctype=doctype)
-
-    self.figures = self.get_figures()
-
-  @property
-  def docname (self):
     """
-    Full Notebook name (str)
+    Class for the Notebook object
+
+
+    Parameters
+    ----------
+      date : str
+        Notebook date (dd-mm-yyyy)
+
+      user : str
+        Notebook author (name-surname)
+
+      path : str
+        Notebook local path
     """
 
-    docname = os.path.basename(self.path[:-1]) + '/' + self.name
+    def __init__(self, date, user, path):
 
-    return docname
+        name = date + '_' + user + '.txt'
+        doctype = 'notebook'
 
-  def open_editor (self):
-    """
-    Open the document using the system's basic text editor
-    """
+        super(Notebook, self).__init__(date=date, user=user,
+                                       path=path, name=name,
+                                       doctype=doctype)
 
-    filepath = self.path + self.name
+        self.figures = self.get_figures()
 
-    if not os.path.exists(filepath):
-      with open(filepath, mode='w') as file:
-        file.write('#TEXT\n\n#FIGURES\n\n')
+    @property
+    def docname(self):
+        """
+        Full Notebook name (str)
+        """
 
-    os.chmod(filepath, S_IWUSR | S_IREAD)
+        docname = os.path.basename(self.path[:-1]) + '/' + self.name
 
-    if sys.platform.startswith('win'):
-      os.system('notepad ' + filepath)
-    if sys.platform.startswith('linux'):
-      os.system('gedit ' + filepath)
-    if sys.platform.startswith('darwin'):
-      os.system('open -a TextEdit ' + filepath)
+        return docname
 
-    os.chmod(filepath, S_IREAD)
+    def open_editor(self):
+        """
+        Open the document using the system's basic text editor
+        """
 
-  def read (self):
-    """
-    Get all the raw text extracted from the Notebook document
+        filepath = self.path + self.name
 
+        if not os.path.exists(filepath):
+            with open(filepath, mode='w') as file:
+                file.write('#TEXT\n\n#FIGURES\n\n')
 
-    Returns
-    -------
-    text : str
-      Extracted raw text
-    """
+        os.chmod(filepath, S_IWUSR | S_IREAD)
 
-    with open(self.path + self.name, mode='r') as file:
-      text = file.read()
+        if sys.platform.startswith('win'):
+            os.system('notepad ' + filepath)
+        if sys.platform.startswith('linux'):
+            os.system('gedit ' + filepath)
+        if sys.platform.startswith('darwin'):
+            os.system('open -a TextEdit ' + filepath)
 
-    return text
+        os.chmod(filepath, S_IREAD)
 
-  def get_text (self):
-    """
-    Get the pre-processed text extracted from the Notebook '#TEXT' section
-
-
-    Returns
-    -------
-    text : str
-      Extracted text
-    """
-
-    lines = self.read().splitlines()
-    raw_text = ' '.join([line for line in lines[1:lines.index('#FIGURES')]])
-    text = strip_non_alphanum(strip_punctuation(raw_text.lower()))
-
-    return text
-
-  def get_figs_paragraph (self):
-    """
-    Get the raw text extracted from the Notebook '#FIGURES' section
+    def read(self):
+        """
+        Get all the raw text extracted from the Notebook document
 
 
-    Returns
-    -------
-    text : str
-      Extracted raw text
-    """
+        Returns
+        -------
+        text : str
+          Extracted raw text
+        """
 
-    lines = self.read().splitlines()
-    text = '\n'.join([line for line in lines[lines.index('#FIGURES')+1:]])
+        with open(self.path + self.name, mode='r') as file:
+            text = file.read()
 
-    return text
+        return text
 
-  def get_figures (self):
-    """
-    Get the Figure objects from the Notebook document
-
-
-    Returns
-    -------
-    figures : list of Figure
-      Figure objects
-    """
-
-    fig_names = [line[1:].strip()
-                 for line in self.get_figs_paragraph().splitlines()
-                 if line.startswith('-')]
-    fig_captions = self.get_fig_captions()
-
-    figures = [Figure(date=self.date, user=self.user, path=self.path, name=name, caption=caption)
-               for name, caption in zip(fig_names, fig_captions)]
-
-    return figures
-
-  def get_fig_captions (self):
-    """
-    Get the figures captions of the Notebook document
+    def get_text(self):
+        """
+        Get the pre-processed text extracted from the Notebook '#TEXT' section
 
 
-    Returns
-    -------
-    captions : list of str
-      Figures captions
-    """
+        Returns
+        -------
+        text : str
+          Extracted text
+        """
 
-    captions = []
-    cap = ''
+        lines = self.read().splitlines()
+        raw_text = ' '.join(
+            [line for line in lines[1:lines.index('#FIGURES')]])
+        text = strip_non_alphanum(strip_punctuation(raw_text.lower()))
 
-    for line in self.get_figs_paragraph().splitlines():
+        return text
 
-      if line.startswith('-'):
-        if cap is not None:
-          captions.append(cap)
+    def get_figs_paragraph(self):
+        """
+        Get the raw text extracted from the Notebook '#FIGURES' section
+
+
+        Returns
+        -------
+        text : str
+          Extracted raw text
+        """
+
+        lines = self.read().splitlines()
+        text = '\n'.join([line for line in lines[lines.index('#FIGURES')+1:]])
+
+        return text
+
+    def get_figures(self):
+        """
+        Get the Figure objects from the Notebook document
+
+
+        Returns
+        -------
+        figures : list of Figure
+          Figure objects
+        """
+
+        fig_names = [line[1:].strip()
+                     for line in self.get_figs_paragraph().splitlines()
+                     if line.startswith('-')]
+        fig_captions = self.get_fig_captions()
+
+        figures = [Figure(date=self.date, user=self.user, path=self.path, name=name, caption=caption)
+                   for name, caption in zip(fig_names, fig_captions)]
+
+        return figures
+
+    def get_fig_captions(self):
+        """
+        Get the figures captions of the Notebook document
+
+
+        Returns
+        -------
+        captions : list of str
+          Figures captions
+        """
+
+        captions = []
         cap = ''
 
-      else:
-        cap = cap + ' ' + line
+        for line in self.get_figs_paragraph().splitlines():
 
-    captions.append(cap)
-    captions = [strip_non_alphanum(strip_punctuation(cap.lower()))
-                if not cap == '' else None
-                for cap in captions]
+            if line.startswith('-'):
+                if cap is not None:
+                    captions.append(cap)
+                cap = ''
 
-    return captions
+            else:
+                cap = cap + ' ' + line
 
-  def check_figures (self):
-    """
-    Check if the Notebook directory contains all the figures files referenced
-    in the Notebook document
-    """
+        captions.append(cap)
+        captions = [strip_non_alphanum(strip_punctuation(cap.lower()))
+                    if not cap == '' else None
+                    for cap in captions]
 
-    missing = [fig.name for fig in self.get_figures()
-               if fig.name not in os.listdir(self.path)]
+        return captions
 
-    if missing:
-      e = Exceptions(state='failure',
-                     message='The following files do not exist in the notebook directory:\n\t',
-                     args=missing)
-      e.throw()
+    def check_figures(self):
+        """
+        Check if the Notebook directory contains all the figures files referenced
+        in the Notebook document
+        """
+
+        missing = [fig.name for fig in self.get_figures()
+                   if fig.name not in os.listdir(self.path)]
+
+        if missing:
+            e = Exceptions(state='failure',
+                           message='The following files do not exist in the notebook directory:\n\t',
+                           args=missing)
+            e.throw()

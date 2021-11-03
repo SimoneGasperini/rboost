@@ -3,28 +3,28 @@ from rboost.utils.autocomplete import AutoComplete
 from rboost.utils.exceptions import Exceptions
 
 
-@RBoost.subcommand ('print-label')
+@RBoost.subcommand('print-label')
 class PrintLabel (RBoost):
-  """
-  Print all the info about a label in RBoost network
-  """
+    """
+    Print all the info about a label in RBoost network
+    """
 
-  def main (self):
+    def main(self):
 
-    label = self.get_label()
-    label.show()
+        label = self.get_label()
+        label.show()
 
-  def get_label (self):
+    def get_label(self):
 
-    all_nodes = self.labnames
-    with AutoComplete(options=all_nodes):
-      node = input('>>> Label name : ')
+        all_nodes = self.labnames
+        with AutoComplete(options=all_nodes):
+            node = input('>>> Label name : ')
 
-    if node not in all_nodes:
-      e = Exceptions(state='failure',
-                     message=f'The label "{node}" was not found in RBoost network')
-      e.throw()
+        if node not in all_nodes:
+            e = Exceptions(state='failure',
+                           message=f'The label "{node}" was not found in RBoost network')
+            e.throw()
 
-    label = self.network.graph.nodes[node]['label']
+        label = self.network.graph.nodes[node]['label']
 
-    return label
+        return label

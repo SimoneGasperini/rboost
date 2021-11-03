@@ -3,27 +3,27 @@ import readline
 
 class AutoComplete:
 
-  def __init__ (self, options):
+    def __init__(self, options):
 
-    self.options = options
+        self.options = options
 
-    readline.parse_and_bind('tab: complete')
-    readline.set_completer(self.complete)
+        readline.parse_and_bind('tab: complete')
+        readline.set_completer(self.complete)
 
-  def __enter__ (self):
+    def __enter__(self):
 
-    return self
+        return self
 
-  def __exit__ (self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb):
 
-    self.options = []
+        self.options = []
 
-  def complete (self, text, state):
+    def complete(self, text, state):
 
-    for name in self.options:
+        for name in self.options:
 
-      if name.startswith(text):
-        if state == 0:
-          return name
-        else:
-          state -= 1
+            if name.startswith(text):
+                if state == 0:
+                    return name
+                else:
+                    state -= 1

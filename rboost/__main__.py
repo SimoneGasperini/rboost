@@ -20,4 +20,4 @@ from rboost.cli.visualize.findpath import FindPath
 
 if __name__ == '__main__':
 
-  RBoost.run()
+    RBoost.run()

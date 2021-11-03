@@ -15,76 +15,76 @@ from rboost.utils.exceptions import Exceptions
 
 
 class PDF (Document):
-  """
-  Class for the PDF document object
-
-
-  Parameters
-  ----------
-    date : str (dd-mm-yyyy)
-      PDF upload date
-
-    user : str
-      PDF upload user (name-surname)
-
-    path : str
-      PDF local path
-
-    name : str
-      PDF name
-  """
-
-  def __init__ (self, date, user, path, name):
-
-    doctype = 'standard'
-
-    super(PDF, self).__init__(date=date, user=user,
-                              path=path, name=name,
-                              doctype=doctype)
-
-  @property
-  def docname (self):
     """
-    Full PDF name (str)
+    Class for the PDF document object
+
+
+    Parameters
+    ----------
+      date : str (dd-mm-yyyy)
+        PDF upload date
+
+      user : str
+        PDF upload user (name-surname)
+
+      path : str
+        PDF local path
+
+      name : str
+        PDF name
     """
 
-    docname = self.name
+    def __init__(self, date, user, path, name):
 
-    return docname
+        doctype = 'standard'
 
-  def get_text (self):
-    """
-    Get the pre-processed text extracted from the PDF document
+        super(PDF, self).__init__(date=date, user=user,
+                                  path=path, name=name,
+                                  doctype=doctype)
+
+    @property
+    def docname(self):
+        """
+        Full PDF name (str)
+        """
+
+        docname = self.name
+
+        return docname
+
+    def get_text(self):
+        """
+        Get the pre-processed text extracted from the PDF document
 
 
-    Returns
-    -------
-    text : str
-      Extracted text (None if the extraction fails)
-    """
+        Returns
+        -------
+        text : str
+          Extracted text (None if the extraction fails)
+        """
 
-    output_string = StringIO()
+        output_string = StringIO()
 
-    try:
-      with open(self.path + self.name, 'rb') as file:
-        document = PDFDocument(PDFParser(file))
-        resource_manager = PDFResourceManager()
-        device = TextConverter(resource_manager,
-                               output_string,
-                               laparams=LAParams())
-        interpreter = PDFPageInterpreter(resource_manager, device)
+        try:
+            with open(self.path + self.name, 'rb') as file:
+                document = PDFDocument(PDFParser(file))
+                resource_manager = PDFResourceManager()
+                device = TextConverter(resource_manager,
+                                       output_string,
+                                       laparams=LAParams())
+                interpreter = PDFPageInterpreter(resource_manager, device)
 
-        print(f'>>> Reading document "{self.name}"')
-        for page in tqdm(list(PDFPage.create_pages(document)), ncols=80):
-          interpreter.process_page(page)
+                print(f'>>> Reading document "{self.name}"')
+                for page in tqdm(list(PDFPage.create_pages(document)), ncols=80):
+                    interpreter.process_page(page)
 
-    except UnicodeError:
-      e = Exceptions(state='warning',
-                     message=f'The pdf file "{self.name}" cannot be read')
-      e.throw()
-      return
+        except UnicodeError:
+            e = Exceptions(state='warning',
+                           message=f'The pdf file "{self.name}" cannot be read')
+            e.throw()
+            return
 
-    text = output_string.getvalue()
-    text = strip_non_alphanum(strip_punctuation(text.lower()))
+        text = output_string.getvalue()
+        text = strip_non_alphanum(strip_punctuation(text.lower()))
 
-    return text
+        return text
