@@ -43,11 +43,6 @@ class RBoost (cli.Application):
   network = Network(filepath = PATH + 'My_Downloads/network.pkl',
                     gdrive   = gdrive)
 
-  keyword_ratios = {'standard': 0.02,
-                    'notebook': 0.4,
-                    'figure': 0.9,
-                    'remark': 0.6}
-
   def main (self):
 
     if not self.nested_command:

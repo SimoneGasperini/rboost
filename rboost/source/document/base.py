@@ -3,7 +3,11 @@ import pandas as pd
 import nltk
 from gensim import summarization
 
-from rboost.cli.rboost import RBoost
+
+keyword_ratios = {'standard': 0.02,
+                  'notebook': 0.4,
+                  'figure': 0.9,
+                  'remark': 0.6}
 
 
 class Document:
@@ -57,9 +61,7 @@ class Document:
     if self.text is None:
       return {}
 
-    typing = self.doctype.split('-')[0]
-    ratio = RBoost.keyword_ratios[typing]
-
+    ratio = keyword_ratios[self.doctype.split('-')[0]]
     raw_kws = summarization.keywords(self.text, ratio=ratio, scores=True, lemmatize=True, split=True)
 
     lmt = nltk.wordnet.WordNetLemmatizer()
