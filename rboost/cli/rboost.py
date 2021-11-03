@@ -14,6 +14,10 @@ from rboost.source.network import Network
 from rboost.utils.autocomplete import AutoComplete
 
 
+import warnings
+warnings.filterwarnings('ignore')
+
+
 class RBoost (cli.Application):
 
   PROGNAME = 'rboost'
