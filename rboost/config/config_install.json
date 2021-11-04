@@ -1,0 +1,21 @@
+{
+    "python_warnings": "ignore",
+    "rboost_data_dir": "~/Desktop/RBoost_Data/",
+    "sub_dirs": {
+        "pdfs_dir": "~/Desktop/RBoost_Data/My_Documents/pdfs/",
+        "notebooks_dir": "~/Desktop/RBoost_Data/My_Documents/notebooks/",
+        "remarks_dir": "~/Desktop/RBoost_Data/My_Documents/remarks/",
+        "downloads_dir": "~/Desktop/RBoost_Data/My_Downloads/"
+    },
+    "dataframe_columns": [
+        "DATE",
+        "USER/AUTHOR",
+        "DOCNAME",
+        "DOCTYPE",
+        "KEYWORDS"
+    ],
+    "gdrive_folders": [
+        "pdfs",
+        "notebooks"
+    ]
+}

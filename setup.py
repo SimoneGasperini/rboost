@@ -1,53 +1,33 @@
-import os
-
-from shutil import copy
-
-from setuptools import setup
-from setuptools import find_packages
-
-import nltk
+from setuptools import setup, find_packages
 
 
-RBOOST_DATA_PATH = os.path.expanduser(
-    '~/Desktop/RBoost_Data/').replace('\\', '/')
-CLIENT_SECRETS = './client_secrets.json'
-REQUIREMENTS = './requirements.txt'
+NAME = 'rboost'
+VERSION = '0.0.2'
+AUTHOR = 'SimoneGasperini'
+AUTHOR_EMAIL = 'simone.gasperini2@studio.unibo.it'
+REPO_URL = 'https://github.com/SimoneGasperini/rboost.git'
+PYTHON_VERSION = '>=3.8'
 
-directories = ['My_Documents/pdfs',
-               'My_Documents/notebooks',
-               'My_Documents/remarks',
-               'My_Downloads']
-for directory in directories:
-    os.makedirs(RBOOST_DATA_PATH + directory, exist_ok=True)
 
-copy(src=CLIENT_SECRETS, dst=RBOOST_DATA_PATH)
+def get_requirements():
+    with open('./requirements.txt', 'r') as f:
+        reqs = f.read().splitlines()
+    return reqs
 
-nltk.download('wordnet')
-
-with open(REQUIREMENTS, 'r') as file:
-    requirements = file.read().splitlines()
 
 setup(
-
-    name='rboost',
-    version='0.0.1',
-
-    author='Simone Gasperini',
-    author_email='simone.gasperini2@studio.unibo.it',
-
-    description='rboost software',
-    url='https://github.com/SimoneGasperini/rboost.git',
-
+    name=NAME,
+    version=VERSION,
+    author=AUTHOR,
+    author_email=AUTHOR_EMAIL,
+    url=REPO_URL,
+    python_requires=PYTHON_VERSION,
     packages=find_packages(),
-
-    install_requires=requirements,
-
+    install_requires=get_requirements(),
     entry_points={
         'console_scripts': [
             'rboost = rboost.__main__:RBoost',
         ]
     },
-
-    python_requires='>=3.8',
-
+    include_package_data=True
 )
