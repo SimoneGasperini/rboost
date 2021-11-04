@@ -1,24 +1,18 @@
 # R-Boost
 
-## How to easily install and run `rboost`
+
+## How to install and run `rboost` software (for users)
+
+```bash
+pip install rboost
+rboost
+```
 
 
-- clone the git repository and change directory:
+## How to install `rboost` software from source (for developers)
 
 ```bash
 git clone https://github.com/SimoneGasperini/rboost.git
 cd rboost
-```
-
-
-- install the requirements and run the setup script:
-```bash
-pip install -r requirements.txt
-python setup.py install
-```
-
-
-- run the program:
-```bash
-rboost
+python setup.py develop
 ```
