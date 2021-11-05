@@ -24,10 +24,6 @@ setup(
     python_requires=PYTHON_VERSION,
     packages=find_packages(),
     install_requires=get_requirements(),
-    entry_points={
-        'console_scripts': [
-            'rboost = rboost.__main__:RBoost',
-        ]
-    },
+    entry_points={'console_scripts': ['rboost=rboost.gui.__main:rboost']},
     include_package_data=True
 )
