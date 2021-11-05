@@ -1,6 +1,6 @@
 {
     "python_warnings": "ignore",
-    "rboost_data_dir": "~/Desktop/RBoost_Data/",
+    "data_dir": "~/Desktop/RBoost_Data/",
     "sub_dirs": {
         "pdfs_dir": "~/Desktop/RBoost_Data/My_Documents/pdfs/",
         "notebooks_dir": "~/Desktop/RBoost_Data/My_Documents/notebooks/",
@@ -17,5 +17,7 @@
     "gdrive_folders": [
         "pdfs",
         "notebooks"
-    ]
+    ],
+    "source_code_url": "https://github.com/SimoneGasperini/rboost",
+    "online_docs_url": "https://rboost.readthedocs.io/en/latest/index.html"
 }

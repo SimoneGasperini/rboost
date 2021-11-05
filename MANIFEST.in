@@ -1,1 +1,2 @@
-include rboost/config/*
+include rboost/data/config/*
+include rboost/data/icons/*
