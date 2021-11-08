@@ -23,26 +23,34 @@ class MainWindow(QMainWindow):
         self.home_action = QAction(self.icons['home'], 'Home', self)
 
         self.search_action = QAction(self.icons['search'], 'Search', self)
+        self.list_documents_action = QAction(
+            self.icons['documents'], 'List documents', self)
+        self.list_labels_action = QAction(
+            self.icons['labels'], 'List labels', self)
         self.write_notebook_action = QAction(
-            self.icons['write'], 'Write notebook', self)
+            self.icons['notebook'], 'Write notebook', self)
         self.write_remark_action = QAction(
-            self.icons['write'], 'Write remark', self)
+            self.icons['remark'], 'Write remark', self)
         self.upload_pdfs_action = QAction(
             self.icons['upload'], 'Upload PDFs', self)
         self.download_action = QAction(
             self.icons['download'], 'Download', self)
 
-        self.find_path_action = QAction('Find path', self)
-        self.print_label_action = QAction('Print label', self)
-        self.loc_label_action = QAction('Localize label', self)
-        self.show_labels_action = QAction('Show labels', self)
-        self.show_network_action = QAction('Show network', self)
+        self.find_path_action = QAction(self.icons['path'], 'Find path', self)
+        self.print_label_action = QAction(
+            self.icons['print'], 'Print label', self)
+        self.loc_label_action = QAction(
+            self.icons['loc'], 'Localize label', self)
+        self.show_labels_action = QAction(
+            self.icons['show'], 'Show labels', self)
+        self.show_network_action = QAction(
+            self.icons['network'], 'Show network', self)
 
         self.about_action = QAction(self.icons['about'], 'About', self)
         self.source_code_action = QAction(
-            self.icons['web'], 'Source code', self)
+            self.icons['code'], 'Source code', self)
         self.online_docs_action = QAction(
-            self.icons['web'], 'Online docs', self)
+            self.icons['docs'], 'Online docs', self)
 
     def _create_menu_bar(self):
         menuBar = QMenuBar(self)
@@ -52,6 +60,8 @@ class MainWindow(QMainWindow):
 
         workspace_menu = menuBar.addMenu('Workspace')
         workspace_menu.addAction(self.search_action)
+        workspace_menu.addAction(self.list_documents_action)
+        workspace_menu.addAction(self.list_labels_action)
         workspace_menu.addAction(self.write_notebook_action)
         workspace_menu.addAction(self.write_remark_action)
         workspace_menu.addAction(self.upload_pdfs_action)
