@@ -7,7 +7,7 @@ import pandas as pd
 import networkx as nx
 import nltk
 
-from rboost.__config import get_config_install, get_client_secrets, get_icons
+from rboost.__config import get_config_install, get_client_secrets, get_icons, get_logo
 from rboost.source.gdrive import GDrive
 from rboost.source.database import Database
 from rboost.source.network import Network
@@ -19,6 +19,7 @@ class RBoost:
         self.CONFIG_INSTALL = get_config_install()
         self.CLIENT_SECRETS = get_client_secrets()
         self.icons = get_icons()
+        self.logo = get_logo()
         self._configure()
 
     def _configure(self):

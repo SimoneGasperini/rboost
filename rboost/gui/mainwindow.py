@@ -1,6 +1,7 @@
 from PySide2.QtWidgets import QMainWindow, QAction, QMenuBar
 from PySide2.QtGui import QIcon
 
+from rboost.gui.home import HomeWindow
 from rboost.gui.listdocuments import ListDocumentsWindow
 
 
@@ -9,13 +10,16 @@ class MainWindow(QMainWindow):
     def __init__(self, rboost):
         super().__init__()
         self.rboost = rboost
+
         self.setWindowTitle('RBoost')
-        self.setGeometry(100, 100, 600, 600)
+        self.setGeometry(100, 100, 1200, 800)
         self._set_icons()
         self.setWindowIcon(self.icons['rboost'])
         self._create_actions()
         self._create_menu_bar()
         self._connect_actions()
+
+        self.home()
 
     def _set_icons(self):
         self.icons = {name: QIcon(path)
@@ -84,12 +88,18 @@ class MainWindow(QMainWindow):
         self.setMenuBar(menuBar)
 
     def _connect_actions(self):
+        self.home_action.triggered.connect(self.home)
+
         self.list_documents_action.triggered.connect(self.list_documents)
 
         self.source_code_action.triggered.connect(
             self.rboost.go_to_source_code)
         self.online_docs_action.triggered.connect(
             self.rboost.go_to_online_docs)
+
+    def home(self):
+        home_window = HomeWindow(rboost=self.rboost)
+        self.setCentralWidget(home_window)
 
     def list_documents(self):
         list_documents_window = ListDocumentsWindow(rboost=self.rboost)

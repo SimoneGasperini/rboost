@@ -24,3 +24,9 @@ def get_icons():
     icons = {filename.split('.')[0]: os.path.join(basedir, filename)
              for filename in filenames}
     return icons
+
+
+def get_logo():
+    filepath = 'data/logo.jpg'
+    logo = resource_filename(__name__, filepath)
+    return logo
