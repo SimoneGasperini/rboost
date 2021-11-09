@@ -7,13 +7,13 @@
         "remarks_dir": "~/Desktop/RBoost_Data/My_Documents/remarks/",
         "downloads_dir": "~/Desktop/RBoost_Data/My_Downloads/"
     },
-    "dataframe_columns": [
-        "DATE",
-        "USER/AUTHOR",
-        "DOCNAME",
-        "DOCTYPE",
-        "KEYWORDS"
-    ],
+    "dataframe_columns": {
+        "date": "DATE",
+        "user": "USER/AUTHOR",
+        "docname": "DOCNAME",
+        "doctype": "DOCTYPE",
+        "keywords": "KEYWORDS"
+    },
     "gdrive_folders": [
         "pdfs",
         "notebooks"
