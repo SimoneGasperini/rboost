@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 
 NAME = 'rboost'
-VERSION = '0.1.0'
+VERSION = '0.2.0'
 AUTHOR = 'SimoneGasperini'
 AUTHOR_EMAIL = 'simone.gasperini2@studio.unibo.it'
 REPO_URL = 'https://github.com/SimoneGasperini/rboost.git'

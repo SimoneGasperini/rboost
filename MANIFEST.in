@@ -1,2 +1,3 @@
 include rboost/data/config/*
 include rboost/data/icons/*
+include rboost/data/logo.jpg
