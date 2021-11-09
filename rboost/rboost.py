@@ -137,11 +137,3 @@ class RBoost:
 
     def go_to_online_docs(self):
         webbrowser.open(self.online_docs_url)
-
-    @staticmethod
-    def show_dataframe(df, full=False):
-        pd.set_option('colheader_justify', 'right')
-        if full:
-            pd.set_option('display.max_rows', None)
-            pd.set_option('display.max_colwidth', None)
-        print(df)
