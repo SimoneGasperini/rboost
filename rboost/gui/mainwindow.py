@@ -1,6 +1,8 @@
 from PySide2.QtWidgets import QMainWindow, QAction, QMenuBar
 from PySide2.QtGui import QIcon
 
+from rboost.gui.listdocuments import ListDocumentsWindow
+
 
 class MainWindow(QMainWindow):
 
@@ -82,8 +84,13 @@ class MainWindow(QMainWindow):
         self.setMenuBar(menuBar)
 
     def _connect_actions(self):
+        self.list_documents_action.triggered.connect(self.list_documents)
+
         self.source_code_action.triggered.connect(
             self.rboost.go_to_source_code)
-
         self.online_docs_action.triggered.connect(
             self.rboost.go_to_online_docs)
+
+    def list_documents(self):
+        list_documents_window = ListDocumentsWindow(rboost=self.rboost)
+        self.setCentralWidget(list_documents_window)
