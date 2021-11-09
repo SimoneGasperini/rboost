@@ -6,7 +6,8 @@ from PySide2.QtWidgets import (
     QFormLayout,
     QTableView,
     QPushButton,
-    QComboBox
+    QComboBox,
+    QHeaderView
 )
 
 from rboost.gui.utils.pandasmodel import PandasModel
@@ -74,6 +75,7 @@ class ListDocumentsWindow(QWidget):
         model = PandasModel(df)
         table_view = QTableView()
         table_view.setModel(model)
+        table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         return table_view
 
     def _filter_data(self, df):
