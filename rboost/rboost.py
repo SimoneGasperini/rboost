@@ -27,7 +27,8 @@ class RBoost:
         self._set_data_dir_path()
         self._set_sub_dirs_paths()
         self._create_dirs()
-        self._set_dataframe_columns()
+        self._set_documents_df_cols()
+        self._set_labels_df_cols()
         self._download_nltk_wordnet()
         self._set_gdrive_folders()
         self._set_gdrive_object()
@@ -57,8 +58,11 @@ class RBoost:
         os.makedirs(self.remarks_dir_path, exist_ok=True)
         os.makedirs(self.downloads_dir_path, exist_ok=True)
 
-    def _set_dataframe_columns(self):
-        self.dataframe_columns = self.CONFIG_INSTALL['dataframe_columns']
+    def _set_documents_df_cols(self):
+        self.documents_df_cols = self.CONFIG_INSTALL['documents_df_cols']
+
+    def _set_labels_df_cols(self):
+        self.labels_df_cols = self.CONFIG_INSTALL['labels_df_cols']
 
     def _download_nltk_wordnet(self):
         nltk.download('wordnet', quiet=True)
@@ -122,7 +126,8 @@ class RBoost:
     def init_database_gdrive(self):
         for foldername in self.gdrive_folders:
             self.gdrive.create_folder(foldername)
-        dataframe = pd.DataFrame(self.dataframe_columns)
+        df_cols = list(self.documents_df_cols.values())
+        dataframe = pd.DataFrame(df_cols)
         dataframe.to_pickle(self.database.filepath)
         self.gdrive.upload_file(self.database.filepath)
         os.remove(self.database.filepath)

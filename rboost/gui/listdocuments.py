@@ -81,11 +81,11 @@ class ListDocumentsWindow(QWidget):
     def _filter_data(self, df):
         user = str(self.user_combobox.currentText())
         if user:
-            colname = self.rboost.dataframe_columns['user']
+            colname = self.rboost.documents_df_cols['user']
             df = df.loc[df[colname] == user]
         doctype = str(self.doctype_combobox.currentText())
         if doctype:
-            colname = self.rboost.dataframe_columns['doctype']
+            colname = self.rboost.documents_df_cols['doctype']
             df = df.loc[df[colname] == doctype]
         return df
 

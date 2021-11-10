@@ -7,12 +7,18 @@
         "remarks_dir": "~/Desktop/RBoost_Data/My_Documents/remarks/",
         "downloads_dir": "~/Desktop/RBoost_Data/My_Downloads/"
     },
-    "dataframe_columns": {
+    "documents_df_cols": {
         "date": "DATE",
         "user": "USER/AUTHOR",
         "docname": "DOCNAME",
         "doctype": "DOCTYPE",
         "keywords": "KEYWORDS"
+    },
+    "labels_df_cols": {
+        "label": "LABEL",
+        "types": "TYPES",
+        "queries": "QUERIES",
+        "uploads": "UPLOADS"
     },
     "gdrive_folders": [
         "pdfs",
