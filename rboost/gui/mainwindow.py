@@ -3,6 +3,7 @@ from PySide2.QtGui import QIcon
 
 from rboost.gui.home import HomeWindow
 from rboost.gui.listdocuments import ListDocumentsWindow
+from rboost.gui.listlabels import ListLabelsWindow
 
 
 class MainWindow(QMainWindow):
@@ -91,6 +92,7 @@ class MainWindow(QMainWindow):
         self.home_action.triggered.connect(self.home)
 
         self.list_documents_action.triggered.connect(self.list_documents)
+        self.list_labels_action.triggered.connect(self.list_labels)
 
         self.source_code_action.triggered.connect(
             self.rboost.go_to_source_code)
@@ -104,3 +106,7 @@ class MainWindow(QMainWindow):
     def list_documents(self):
         list_documents_window = ListDocumentsWindow(rboost=self.rboost)
         self.setCentralWidget(list_documents_window)
+
+    def list_labels(self):
+        list_labels_window = ListLabelsWindow(rboost=self.rboost)
+        self.setCentralWidget(list_labels_window)
