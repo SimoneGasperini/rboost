@@ -94,15 +94,18 @@ class RBoost:
 
     @property
     def users(self):
-        return set(self.database.dataframe['USER/AUTHOR'])
+        colname = self.documents_df_cols['user']
+        return set(self.database.dataframe[colname])
 
     @property
     def docnames(self):
-        return set(self.database.dataframe['DOCNAME'])
+        colname = self.documents_df_cols['docname']
+        return set(self.database.dataframe[colname])
 
     @property
     def doctypes(self):
-        return set(self.database.dataframe['DOCTYPE'])
+        colname = self.documents_df_cols['doctype']
+        return set(self.database.dataframe[colname])
 
     @property
     def labnames(self):
