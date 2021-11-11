@@ -2,6 +2,7 @@ from PySide2.QtWidgets import QMainWindow, QAction, QMenuBar
 from PySide2.QtGui import QIcon
 
 from rboost.gui.home import HomeWindow
+from rboost.gui.search import SearchWindow
 from rboost.gui.listdocuments import ListDocumentsWindow
 from rboost.gui.listlabels import ListLabelsWindow
 
@@ -91,6 +92,7 @@ class MainWindow(QMainWindow):
     def _connect_actions(self):
         self.home_action.triggered.connect(self.home)
 
+        self.search_action.triggered.connect(self.search)
         self.list_documents_action.triggered.connect(self.list_documents)
         self.list_labels_action.triggered.connect(self.list_labels)
 
@@ -102,6 +104,10 @@ class MainWindow(QMainWindow):
     def home(self):
         home_window = HomeWindow(rboost=self.rboost)
         self.setCentralWidget(home_window)
+
+    def search(self):
+        search_window = SearchWindow(rboost=self.rboost)
+        self.setCentralWidget(search_window)
 
     def list_documents(self):
         list_documents_window = ListDocumentsWindow(rboost=self.rboost)

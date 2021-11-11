@@ -1,6 +1,7 @@
 click==7.1.2
 colorama==0.4.4
 gensim==4.1.2
+levenshtein
 matplotlib
 networkx
 nltk==3.6.5
