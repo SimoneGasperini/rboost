@@ -4,7 +4,7 @@ gensim==4.1.2
 levenshtein
 matplotlib
 networkx
-nltk==3.6.5
+nltk==3.6.6
 pandas
 pdfminer==20191125
 PyDrive==1.3.1
